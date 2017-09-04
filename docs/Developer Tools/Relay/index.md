@@ -26,20 +26,20 @@ This example shows you how to use the RPC Builder app in conjunction with the Re
 
     *Initial app startup. This state is visible when the app is not connected to hardware running SDL Core via USB.*
 4. Connect the iOS device to the SDL Core using a USB cable.
-5. When the iOS device is connected to the SDL Core, the status under **USB Connection** should change from *Disconnected* to *Connected*. Wait for the the status of the **EASession** to change to *Connected*. The EASession is a communication channel between the Relay app and SDL Core.
+5. When the iOS device is connected to the SDL Core, the status under **USB Connection** should change from *Disconnected* to *Connected*. Wait for the the status of the **EASession** to change to *Connected*. The EASession is a communication channel between the Relay app and SDL Core. If **EASession** is not *Connected* within a few seconds pull and reconnect the USB cord to the SDL Core.
 
     <img src="assets/USBConnected.png" alt="relay app screen when USB has been connected successfully" width="200px">
 
-    *When Relay is initially connected via USB, but the connection isn't complete.*
+    *The Relay App is initially connected via USB, but the connection isn't complete.*
 
     <img src="assets/EASessionConnected.png" alt="relay app screen when EASession is complete" width="200px">
 
-    *When the Relay is fully connected via USB, and ready for server start.*  
+    *The Relay App is fully connected via USB, and ready for server start.*  
 6. Once the USB Connection and EASession are both set to *Connected*, the app is fully connected and ready for server start. Toggle the switch under **Server** to on. When the status of the server changes to *Available*, the IP address and port number of the wifi network the Relay app is connected to will appear under **Server**.
 
     <img src="assets/ServerStarted.png" alt="relay app screen with ip address and port number visible" width="200px">
 
-    *Server is now started, and awating connection.*
+    *Server is now started and awaiting connection.*
 7. Open the RPC Builder app in Xcode and click on the *run* button to launch the app in Xcode's iOS Simulator. Enter the IP address and port number from the Relay app into the RPC Builder app and click on *Next*. On the next page of the RPC Builder app, click on *Send*.
 8. Once the RPC Builder app is running on the Simulator, the status of **SDL** in the Relay app should change to *Connected*.
 
@@ -65,9 +65,10 @@ This example shows you how to connect a custom app with the Relay app.
 
     *Application is correctly connected to Relay, and messages can now be sent and received.*  
 5. The app is now connected to Relay, and messages can be sent and received. Debug logs will appear in Xcode's debug area.
-    !!! NOTE  
-    The Relay app should always be connected to the SDL Core before starting your app, otherwise the setup will not work 
-    !!!
+
+!!! NOTE  
+The Relay app should always be connected to the SDL Core before starting your app, otherwise setup will not work. 
+!!!
 
 ## Need Help?
 If you need general assistance, or have other questions, you can [sign up](http://sdlslack.herokuapp.com) for the [SDL Slack](https://smartdevicelink.slack.com/) and chat with other developers and the maintainers of the project.
