@@ -24,13 +24,11 @@ On the settings page, select a RPC spec file. The default *Mobile_API.xml* file 
 
 Also on the settings page, set the transport layer to TCP/IP or iAP. For more information on which connection to use, please view the [SDL iOS Guide](https://smartdevicelink.com/en/guides/iOS/getting-started/connecting-to-a-sdl-core/).
 
-Once the spec file and transport layer have been set, click on *Next*. The next page is the Register App Interface (RAI) screen. This page contains information for registering the app the first time it connects with the SDL Core. Simply click on *Send* to use the default settings. If the properties on the RAI screen are modified, they will be cached for subsequent launches.
+Once the spec file and transport layer have been set, click on *Next*. The next page is the Register App Interface (RAI) screen. This page contains information for registering the app the first time it connects with the SDL Core. Simply click on *Send* to use the default settings. If the properties on the RAI screen are modified, they will be cached for subsequent launches. **Once *Send* is pressed, the app will not continue until a successful connection is achieved and RAI response is received.**
 
 <img src="assets/RegisterAppInterface.png" alt="rpc builder register app interface rpc settings" width="200px">
 
 <img src="assets/Connecting.png" alt="rpc builder waiting for connection alert" width="200px">
-
-**Once *Send* is pressed, the app will not continue until a successful connection is achieved and RAI response is received.**
 
 ### Main RPCs Table
 
@@ -48,7 +46,7 @@ To send an RPC to the SDL Core select the RPC from the table, fill out the RPC p
 #### Parameter Information
 After selecting an RPC from the table, a view will appear with all possible parameters for this RPC. To find out more information about an argument, tap and hold the argument name to reveal the information.
 
-<img src="assets/RPCs.png" alt="rpc builder main field example" width="200px">
+<img src="assets/Show.png" alt="rpc builder Show RPC example" width="200px">
 
 #### Required Parameters
 Required data will have a red asterisk next to the argument name.
