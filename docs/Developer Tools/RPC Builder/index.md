@@ -4,7 +4,7 @@
 The SmartDeviceLink (SDL) RPC Builder app is a free iOS app designed to help developers understand the SDL interface and how remote procedure calls (RPCs) work. Use the app to send and receive RPCs with a SDL Core without writing any code.
 
 !!! NOTE
-In order for the RPC Builder app to work correctly, all commands must be executed in proper sequence. For example, when building a custom menu, a *performInteraction* call will only be successful if sent after a *createInteractionChoiceSet* call. To find more information about how to properly set up a sequence of commands, please reference the [SDL App Developer Documentation](https://smartdevicelink.com/docs/iOS/master/).
+In order for the RPC Builder app to work correctly, all commands must be executed in proper sequence. For example, when building a custom menu, a *performInteraction* call will only be successful if sent after a *createInteractionChoiceSet* call. To find more information about how to properly set up a sequence of commands, please reference the [SDL iOS Guides](https://smartdevicelink.com/en/guides/iOS/getting-started/installation/) and the [SDL iOS Documentation](https://smartdevicelink.com/en/docs/iOS/master/).
 !!!
 
 ## Getting Started
@@ -13,44 +13,42 @@ In order to begin using RPC Builder, the [SDL iOS](http://www.github.com/smartde
 cd RPC\ Builder/
 pod install
 ```
-
 After the SDL iOS library has been installed, the RPC Builder app can be deployed on an iOS device.
 
 ## RPC Builder Interface
 
 ### Settings Page
-![Settings](assets/Settings.png)
-<br/><br/>
+<img src="assets/Settings.png" alt="rpc builder settings app first screen" width="200px">
+
 On the settings page, select a RPC spec file. The default *Mobile_API.xml* file will generate all possible RPCs available for the app. To use a custom RPC spec file, add a new file via iTunes file sharing to the `SpecXMLs` directory. The file can also be added via a remote URL.
 
-Also on the settings page, set the transport layer to TCP/IP or iAP.
+Also on the settings page, set the transport layer to TCP/IP or iAP. For more information on which connection to use, please view the [SDL iOS Guide](https://smartdevicelink.com/en/guides/iOS/getting-started/connecting-to-a-sdl-core/).
 
 Once the spec file and transport layer have been set, click on *Next*. The next page is the Register App Interface (RAI) screen. This page contains information for registering the app the first time it connects with the SDL Core. Simply click on *Send* to use the default settings. If the properties on the RAI screen are modified, they will be cached for subsequent launches.
 
-![RegisterAppInterface](assets/RegisterAppInterface.png)
-![Connecting](assets/Connecting.png)
+<img src="assets/RegisterAppInterface.png" alt="rpc builder register app interface rpc settings" width="200px">
 
-!!! IMPORTANT
-Once *Send* is pressed, the app will not continue until a successful connection is achieved and RAI response is received.
-!!!
+<img src="assets/Connecting.png" alt="rpc builder waiting for connection alert" width="200px">
+
+**Once *Send* is pressed, the app will not continue until a successful connection is achieved and RAI response is received.**
 
 ### Main RPCs Table
 
-![RPCs](assets/RPCs.png)
+<img src="assets/RPCs.png" alt="rpc builder list of R P C screen" width="200px">
 
-The main RPC table is create at runtime by the app from the spec XML file. If there is additional information provided about the RPC call, an information button will appear next to the RPC name in the table. Click on the information button to learn more about the RPC call.
+The main RPC table is created at runtime by the app from a spec XML file. If there is additional information provided about the RPC call, an information button will appear next to the RPC name in the table. Click on the information button to learn more about the RPC call.
 
-![AddCommand](assets/AddCommand.png)
+<img src="assets/AddCommand.png" alt="rpc builder add command R P C example" width="200px">
 
 ### Send A RPC
 To send an RPC to the SDL Core select the RPC from the table, fill out the RPC parameters and click *Send*.
 
-![RPCs](assets/RPCs.png)
+<img src="assets/RPCs.png" alt="rpc builder R P C examples" width="200px">
 
 #### Parameter Information
 After selecting an RPC from the table, a view will appear with all possible parameters for this RPC. To find out more information about an argument, tap and hold the argument name to reveal the information.
 
-![MainField](assets/MainField.png)
+<img src="assets/RPCs.png" alt="rpc builder main field example" width="200px">
 
 #### Required Parameters
 Required data will have a red asterisk next to the argument name.
@@ -66,13 +64,13 @@ There are three different ways to send an RPC argument.
 2. Send without data
     * To send an argument with an empty string, leave the field next to the argument name empty
 3. Don't send the argument
-    * To disable the argument from being included in the RPC, tap once on the argument's name. The argument will be grayed out and not included in the request. In the picture below *mainField1* will not be included in the RPC Request, but *mainField2* will be included with an empty string.  
-![EnabledDisabled](assets/EnabledDisabled.png)
+    * To disable the argument from being included in the RPC, tap once on the argument's name. The argument will be grayed out and not included in the request. In the picture below *mainField1* will not be included in the RPC Request, but *mainField2* will be included with an empty string.
+    <img src="assets/EnabledDisabled.png" alt="rpc builder main field example" width="200px">
 
 ### Modules
 The purpose of modules is to allow developers to create more advanced testing scenarios. A module can contain multiple RPCs. It can also define capabilities not provided in the RPC spec file.
 
-![Modules](assets/Modules.png)
+    <img src="assets/Modules.png" alt="rpc builder modules example" width="200px">
 
 #### Building New Modules
 There are a few requirements for building Modules:
@@ -81,23 +79,23 @@ There are a few requirements for building Modules:
     - These properties will allow other developers to easily understand what the Module will be testing and will also include the iOS version required in order to use Module.
     - Any Module with an iOS version other than 6 as the requirement will be listed.
     - Although other class functions such as `moduleImageName`/`moduleImage` are optional, it is encouraged to add these functions.
-3. All Modules must use the provided `SDLProxy`, `SDLManager`, and `RBSettingsManager` that are provided to subclasses of `RBModuleViewController`.
-4. All Modules must be added to the `Modules.storyboard` storyboard in order to correctly load.
+1. All Modules must use the provided `SDLProxy`, `SDLManager`, and `RBSettingsManager` that are provided to subclasses of `RBModuleViewController`.
+1. All Modules must be added to the `Modules.storyboard` storyboard in order to correctly load.
     - When designing your view controller, use 8px for the vertical and horizontal displacement between views to create a consistent user experience.
-5. All Modules must not interact with any other Module.
-6. All Modules must be added to `RBModuleViewController`'s class function `moduleClassNames`. The new Module should be added to this list in alphabetical order. For an example of how to add this see below:
+1. All Modules must not interact with any other Module.
+1. All Modules must be added to `RBModuleViewController`'s class function `moduleClassNames`. The new Module should be added to this list in alphabetical order. For an example of how to add this see below:
 
-```
-+ (NSArray*)moduleClassNames {
-    if (!moduleClassNames) {
-        moduleClassNames = @[
-                             [RBStreamingModuleViewController classString],  // Streaming
-                             [RBNewModuleViewController classString]  // Module Name
-                             ];
+    ```
+    + (NSArray*)moduleClassNames {
+        if (!moduleClassNames) {
+            moduleClassNames = @[
+                                 [RBStreamingModuleViewController classString],  // Streaming
+                                 [RBNewModuleViewController classString]  // Module Name
+                                 ];
+        }
+        return moduleClassNames;
     }
-    return moduleClassNames;
-}
-```
+    ```
 
 #### Default Modules
 1. Streaming
@@ -108,7 +106,7 @@ There are a few requirements for building Modules:
 ### Console Log
 The console log shows a simplified output of sent and received requests.
 
-![Console](assets/Console.png)
+<img src="assets/Console.png" alt="rpc builder console example" width="200px">
 
 #### Console Color Codes
 The console logs are color coded for quick identification.  
@@ -124,7 +122,7 @@ The console logs are color coded for quick identification.
 #### RPC JSON
 Tapping once on a RPC call in the console will reveal the JSON associated with that RPC call, if applicable.
 
-![Console-RAI](assets/Console-RAI.png)
+<img src="assets/Console-RAI.png" alt="rpc builder console RAI example" width="200px">
 
 ### A Special Note About Putfile
 Putfile is the RPC responsible for sending binary data from our mobile libraries to the SDL Core. The RPC Builder app provides support for adding any type of file: either from the camera roll (for images) or iTunes shared storage for any other kind of files. Similar to adding custom RPC spec files, any file located within the `BulkData` directory will be present in local storage and be usable for upload.
