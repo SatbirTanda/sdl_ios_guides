@@ -3,7 +3,7 @@
 SmartDeviceLink works by sending remote procedure calls (RPCs) back and forth between a smartphone application and the SDL Core. These RPCs allow you to build the user interface, detect button presses, play audio, and get vehicle data, among other things. You will use the SDL library to build your app on the SDL Core.
 
 ### Set Up a Proxy Manager Class
-You will need a class that manages the RPCs sent back and forth between your app and SDL Core. Since  there should be only one active connection to the SDL Core, you may wish to implement this proxy class using the singleton pattern.
+You will need a class that manages the RPCs sent back and forth between your app and SDL Core. Since there should be only one active connection to the SDL Core, you may wish to implement this proxy class using the singleton pattern.
 
 
 #### Objective-C
@@ -14,7 +14,7 @@ You will need a class that manages the RPCs sent back and forth between your app
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SDLMananger : NSObject
+@interface ProxyManager : NSObject
 
 + (instancetype)sharedManager;
 
@@ -102,16 +102,16 @@ At the top of the *ProxyManager* class, import the SDL for iOS library.
 
 #### Objective-C
 ```objc
-#import "SmartDeviceLink.h"
+#import <SmartDeviceLink/SmartDeviceLink.h>
 ```
 
 #### Swift
 ```swift
-import SmartDeviceLink_iOS
+import SmartDeviceLink
 ```
 
-### Implement the SDL Manager
-The `SDLManager` is a helper class that will handle setting up the initial connection with the SDL Core. It will also help you upload images and send RPCs.
+### Create the SDL Manager
+The `SDLManager` is the main class of SmartDeviceLink. It will handle setting up the initial connection with the head unit. It will also help you upload images and send RPCs.
 
 #### Objective-C
 ```objc
@@ -143,6 +143,8 @@ NS_ASSUME_NONNULL_BEGIN
     if (!self) {
       return nil;
     }
+
+    return self
 }
 
 @end
@@ -166,10 +168,10 @@ class ProxyManager: NSObject {
 ```
 
 ### 1. Create a Lifecycle Configuration   
-In order to instantiate the `SDLManager` class, you must first configure an `SDLLifecycleConfiguration` instance with the application name and application id. During the development stage, a dummy app id is usually sufficient. For more information about obtaining an application id, please consult the *SDK Configuration* section of this guide. You must also decide which network configuration to use to connect the app to the SDL Core. Optional, but recommended, configuration properties include short app name, app icon, and app type.
+In order to instantiate the `SDLManager` class, you must first configure an `SDLConfiguration`. To start, we will look at the `SDLLifecycleConfiguration`. You will at minimum need an `SDLLifecycleConfiguration` instance with the application name and application id. During the development stage, a dummy app id is usually sufficient. For more information about obtaining an application id, please consult the *SDK Configuration* section of this guide. You must also decide which network configuration to use to connect the app to the SDL Core. Optional, but recommended, configuration properties include short app name, app icon, and app type.
 
 #### Network Connection Type
-There are two different ways to connect your app to a SDL Core: with a TCP (Wifi) network connection or with an iAP (USB) network connection. Use TCP for debugging and use iAP for production level apps.
+There are two different ways to connect your app to a SDL Core: with a TCP (Wi-Fi) network connection or with an iAP (USB / Bluetooth) network connection. Use TCP for debugging and use iAP for production level apps.
 
 #### iAP
 #### Objective-C
@@ -203,7 +205,7 @@ If you are using a head unit or TDK, and are using the [relay app](https://githu
 
 
 ### 2. Short app name (optional)
-This is a shortened version of your app name that is substituted when the full app name will not be visible due to character count constraints
+This is a shortened version of your app name that is substituted when the full app name will not be visible due to character count constraints. You will want to amek this as short as possible.
 
 #### Objective-C
 ```objc
@@ -222,7 +224,7 @@ This is a custom icon for your application. Please refer to [Uploading Files and
 ```objc
 UIImage* appImage = [UIImage imageNamed:@"<#AppIcon Name#>"];
 if (appImage) {
-  SDLArtwork* appIcon = [SDLArtwork persistentArtworkWithImage:appImage name:@"<#Name to Upload As#>" asImageFormat:SDLArtworkImageFormatJPG /* or SDLArtworkImageFormatPNG */];
+  SDLArtwork* appIcon = [SDLArtwork persistentArtworkWithImage:appImage name:@"<#Name to Upload As#>" asImageFormat:SDLArtworkImageFormatPNG /* or SDLArtworkImageFormatJPG */];
   lifecycleConfiguration.appIcon = appIcon;  
 }
 ```
@@ -237,40 +239,32 @@ if let appImage = UIImage(named: "<#AppIcon Name#>") else {
 
 !!! NOTE
 We recommend using SDLArtwork when building an image.
-Persistent files are used when the image ought to remain on the remote system between ignition cycles. This is commonly used for menu artwork and app icons
+Persistent files are used when the image ought to remain on the remote system between ignition cycles. This is commonly used for menu artwork and app icons.
 !!!
 
 ### 4. App Type (optional)
-The app type is used by car manufacturers to decide how to categorize your app. Each car manufacturer has different categorization system. For example, if you set your app type as media, your app will also show up in the audio tab as well as the apps tab of Ford’s SYNC3 head unit. The app type options are: default, communication, media (i.e. music/podcasts/radio), messaging, navigation, information, and social.
+The app type is used by car manufacturers to decide how to categorize your app. Each car manufacturer has different categorization system. For example, if you set your app type as media, your app will also show up in the audio tab as well as the apps tab of Ford’s SYNC3 head unit. The app type options are: default, communication, media (i.e. music/podcasts/radio), messaging, navigation, projection, information, and social.
+
+!!! NOTE
+Navigation and projection apps usually require special permissions and use video streaming to project a UI.
+!!!
 
 #### Objective-C
 ```objc
-lifecycleConfiguration.appType = SDLAppHMIType.MEDIA;
+lifecycleConfiguration.appType = SDLAppHMITypeMedia;
 ```
 
 #### Swift
 ```swift
-lifecycleConfiguration.appType = .media()
+lifecycleConfiguration.appType = .media
 ```
 
-### 2. Set the Configuration
-The `SDLConfiguration` class is used to set the lifecycle and lock screen configurations for the app. Use the lifecycle configuration settings above to instantiate a `SDLConfiguration` instance.
+### 2. Lock screen
+A lock screen is used to prevent the user from interacting with the app on the smartphone while they are driving. When the vehicle starts moving, the lock screen is activated. Similarly, when the vehicle stops moving, the lock screen is removed. You must implement a lock screen in your app for safety reasons. Any application without a lock screen will not get approval for release to the public.
 
-#### Objective-C
-```objc
-SDLConfiguration* configuration = [SDLConfiguration configurationWithLifecycle:lifecycleConfiguration lockScreen:[SDLLockScreenConfiguration enabledConfiguration]];
-```
+The SDL SDK can take care of the lock screen implementation for you, automatically using your app logo and the connected vehicle logo. If you do not want to use the default lock screen, you can implement your own custom lock screen.
 
-#### Swift
-```swift
-let configuration = SDLConfiguration(lifecycle: lifecycleConfiguration, lockScreen: .enabled())
-```
-
-### 3. Lock screen
-A lock screen is used to prevent the user from interacting with the app on the smartphone while they are driving. When the vehicle starts moving, the lock screen is activated. Similarly, when the vehicle stops moving, the lock screen is removed. You must implement the lock screen in your app for safety reasons. Any application without a lock screen will not get approval for release to the public.  
-The SDL SDK takes care of the lock screen implementation for you, and even includes the resources for a default lock screen, as well as using the app icon you set, and a connected vehicle's logo. If you do not want to use the default lock screen, you can implement your own custom lock screen.  
-
-For more information, please refer to the [Adding the Lock Screen](Adding the Lock Screen) section, for this guide we will be using `SDLLockScreenConfiguration`'s `enabledConfiguration`.
+For more information, please refer to the [Adding the Lock Screen](Adding the Lock Screen) section, for this guide we will be using `SDLLockScreenConfiguration`'s basic `enabledConfiguration`.
 
 #### Objective-C
 ```objc
@@ -280,6 +274,32 @@ For more information, please refer to the [Adding the Lock Screen](Adding the Lo
 #### Swift
 ```swift
 SDLLockScreenConfiguration.enabled()
+```
+
+### 3. Logging
+A logging configuration is used to define where and how often SDL will log. It will also allow you to set your own logging modules and filters.
+
+#### Objective-C
+```objc
+[SDLLogConfiguration defaultConfiguration]
+```
+
+#### Swift
+```objc
+SDLLogConfiguration.default()
+```
+
+### 4. Set the Configuration
+The `SDLConfiguration` class is used to set the lifecycle, lock screen, logging, and optionally (dependent on if you are a Navigation or Projection app) streaming media configurations for the app. Use the lifecycle configuration settings above to instantiate a `SDLConfiguration` instance.
+
+#### Objective-C
+```objc
+SDLConfiguration* configuration = [SDLConfiguration configurationWithLifecycle:lifecycleConfiguration lockScreen:[SDLLockScreenConfiguration enabledConfiguration] logging:[SDLLogConfiguration defaultConfiguration]];
+```
+
+#### Swift
+```swift
+let configuration = SDLConfiguration(lifecycle: lifecycleConfiguration, lockScreen: .enabled(), logging: .default())
 ```
 
 ### 4. Create a SDLManager
