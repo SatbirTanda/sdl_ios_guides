@@ -10,7 +10,7 @@ performInteraction.timeout = 100000
 performInteraction.interactionMode = .manual_ONLY()
 performInteraction.interactionLayout = .keyboard()
 sdlManager.send(performInteraction) { (request, response, error) in
-    if response?.resultCode.isEqual(to: SDLResult.success()) == false {
+    if response?.resultCode.isEqual(to: .success) == false {
         print("Error sending perform interaction.")
         return
     }
@@ -33,7 +33,7 @@ performInteraction.timeout = @(100000);
 performInteraction.interactionMode = SDLInteractionMode.MANUAL_ONLY;
 performInteraction.interactionLayout = SDLLayoutMode.KEYBOARD;
 [self.sdlManager sendRequest:performInteraction withResponseHandler:^(SDLRPCRequest *request, SDLRPCResponse *response, NSError *error) {
-    if (![response.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    if (![response.resultCode isEqualToEnum:SDLResultSuccess]) {
         NSLog(@"Error sending perform interaction.");
         return;
     } else if (![response isKindOfClass:SDLPerformInteractionResponse.class]) {

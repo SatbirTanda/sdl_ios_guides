@@ -55,7 +55,7 @@ getVehicleData.prndl = @YES;
     
     SDLGetVehicleDataResponse* getVehicleDataResponse = (SDLGetVehicleDataResponse *)response;
     SDLResult *resultCode = getVehicleDataResponse.resultCode;
-    if (![resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    if (![resultCode isEqualToEnum:SDLResultSuccess]) {
         if ([resultCode isEqualToEnum:SDLResult.REJECTED]) {
             NSLog(@"GetVehicleData was rejected. Are you in an appropriate HMI?");
         } else if ([resultCode isEqualToEnum:SDLResult.DISALLOWED]) {
@@ -85,7 +85,7 @@ sdlManager.send(getVehicleData) { (request, response, error) in
         return
     }
     
-    if !resultCode.isEqual(to: SDLResult.success()) {
+    if !resultCode.isEqual(to: .success) {
         if resultCode.isEqual(to: SDLResult.rejected()) {
             print("GetVehicleData was rejected. Are you in an appropriate HMI?")
         } else if resultCode.isEqual(to: SDLResult.disallowed()) {

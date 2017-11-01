@@ -73,7 +73,7 @@ SDLSendLocation *sendLocation = [[SDLSendLocation alloc] initWithLongitude:-97.3
     
     SDLSendLocationResponse *sendLocation = (SDLSendLocationResponse *)response;
     SDLResult *resultCode = sendLocation.resultCode;
-    if (![resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    if (![resultCode isEqualToEnum:SDLResultSuccess]) {
         if ([resultCode isEqualToEnum:SDLResult.INVALID_DATA]) {
             NSLog(@"SendLocation was rejected. The request contained invalid data.");
         } else if ([resultCode isEqualToEnum:SDLResult.DISALLOWED]) {
@@ -102,7 +102,7 @@ sdlManager.send(sendLocation) { (request, response, error) in
         return
     }
     
-    if !resultCode.isEqual(to: SDLResult.success()) {
+    if !resultCode.isEqual(to: .success) {
         if resultCode.isEqual(to: SDLResult.invalid_DATA()) {
             print("SendLocation was rejected. The request contained invalid data.")
         } else if resultCode.isEqual(to: SDLResult.disallowed()) {

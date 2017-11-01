@@ -2,9 +2,13 @@
 You have two different options when creating menus. One is to simply add items to the default menu available in every template. The other is to create a custom menu that pops up when needed.
 
 ### Default Menu
-##### Ford HMI
-![Menu Appearance](assets/MenuAppearance.png)  
 Every template has a default menu button. The position of this button varies between templates, and can not be removed from the template. The default menu is initially empty except for an "Exit Your App Name" button. Items can be added to the menu at the root level or to a submenu. It is important to note that a submenu can only be one level deep.
+
+##### Generic HMI
+![Menu Appearance](assets/generic_MenuAppearance.png)
+
+##### Ford HMI
+![Menu Appearance](assets/ford_MenuAppearance.png)  
 
 ### Menu Structure
 ![Menu Structure](assets/MenuStructure.png)
@@ -20,14 +24,8 @@ The `SDLAddCommand` RPC can be used to add items to the root menu or to a submen
 SDLMenuParams* menuParameters = [[SDLMenuParams alloc] initWithMenuName:@"Menu Item Name" parentId:0 position:0];
 
 // For menu items, be sure to use unique ids.
-SDLAddCommand* menuItem = [[SDLAddCommand alloc] initWithId:<#Unique Id#> vrCommands:@[@"<#Voice Recognition Command#>"] handler:^(SDLRPCNotification *notification) {
-    if (![notification isKindOfClass:SDLOnCommand.class]) {
-      return;
-    }
-
-    SDLOnCommand* onCommand = (SDLOnCommand*)notification;
-
-    if ([onCommand.triggerSource isEqualToEnum:SDLTriggerSource.MENU]) {
+SDLAddCommand* menuItem = [[SDLAddCommand alloc] initWithId:<#Unique Id#> vrCommands:@[@"<#Voice Recognition Command#>"] handler:^(SDLOnCommand *command) {
+    if ([onCommand.triggerSource isEqualToEnum:SDLTriggerSourceMenu]) {
       // Menu Item Was Selected
     }
 }];
@@ -36,7 +34,7 @@ SDLAddCommand* menuItem = [[SDLAddCommand alloc] initWithId:<#Unique Id#> vrComm
 menuItem.menuParams = menuParameters;
 
 [self.sdlManager sendRequest:menuItem withResponseHandler:^(SDLRPCRequest *request, SDLRPCResponse *response, NSError *error) {
-    if ([response.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    if ([response.resultCode isEqualToEnum:SDLResultSuccess]) {
       // The menuItem was created successfully
     }
 }];
@@ -47,15 +45,11 @@ menuItem.menuParams = menuParameters;
 // Create the menu parameters
 // The parent id is 0 if adding to the root menu
 // If adding to a submenu, the parent id is the submenu's id
-let menuParameters = SDLMenuParams(menuName: "<#Menu Item Name#>", parentId: 0, position: 0)!
+let menuParameters = SDLMenuParams(menuName: "<#Menu Item Name#>", parentId: 0, position: 0)
 
 // For menu items, be sure to use unique ids.
-let menuItem = SDLAddCommand(id: <#Unique Id#>, vrCommands: ["<#Voice Recognition Command#>"]) { (notification) in                     
-  guard let onCommand = notification as? SDLOnCommand else {
-    return
-  }
-
-  if onCommand.triggerSource == .menu() {
+let menuItem = SDLAddCommand(id: <#Unique Id#>, vrCommands: ["<#Voice Recognition Command#>"]) { (command) in
+  if command.triggerSource == .menu {
     // Menu Item Was Selected
   }
 }!
@@ -64,7 +58,7 @@ let menuItem = SDLAddCommand(id: <#Unique Id#>, vrCommands: ["<#Voice Recognitio
 menuItem.menuParams = menuParameters
 
 sdlManager.send(menuItem) { (request, response, error) in
-  if response?.resultCode == .success() {
+  if response?.resultCode == .success {
       // The menuItem was created successfully
   }
 }
@@ -78,7 +72,7 @@ To create a submenu, first send a `SDLAddSubMenu` RPC. When a response is receiv
 SDLAddSubMenu* subMenu = [[SDLAddSubMenu alloc] initWithId:<#Unique Id#> menuName:@"<#SubMenu Item Name#>"];
 
 [self.sdlManager sendRequest:subMenu withResponseHandler:^(SDLRPCRequest *request, SDLRPCResponse *response, NSError *error) {
-  if ([response.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+  if ([response.resultCode isEqualToEnum:SDLResultSuccess]) {
     // The submenu was created successfully, start adding the submenu items
   }
 }];
@@ -89,7 +83,7 @@ SDLAddSubMenu* subMenu = [[SDLAddSubMenu alloc] initWithId:<#Unique Id#> menuNam
 let subMenu = SDLAddSubMenu(id: <#Unique Id#>, menuName: "<#SubMenu Item Name#>")!
 
 sdlManager.send(subMenu) { (request, response, error) in
-    if response?.resultCode == .success() {
+    if response?.resultCode == .success {
         // The submenu was created successfully, start adding the submenu items
     }
 })
@@ -100,10 +94,10 @@ Use the cmdID of the menu item to tell the SDL Core which item to delete using t
 
 #### Objective-C
 ```objc
-SDLDeleteCommand* deleteMenuItem = [[SDLDeleteCommand alloc] initWithId:<#Id of Menu Item To Delete#>];
+SDLDeleteCommand *deleteMenuItem = [[SDLDeleteCommand alloc] initWithId:<#Id of Menu Item To Delete#>];
 
 [self.sdlManager sendRequest:deleteMenuItem withResponseHandler:^(SDLRPCRequest *request, SDLRPCResponse *response, NSError *error) {
-  if ([response.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+  if ([response.resultCode isEqualToEnum:SDLResultSuccess]) {
     // The menu item was successfully deleted
   }
 }];
@@ -114,7 +108,7 @@ SDLDeleteCommand* deleteMenuItem = [[SDLDeleteCommand alloc] initWithId:<#Id of 
 let deleteMenuItem = SDLDeleteCommand(id: <#Id of Menu Item To Delete#>)!
 
 sdlManager.send(deleteMenuItem) { (request, response, error) in
-    if response?.resultCode == .success() {
+    if response?.resultCode == .success {
         // The menu item was successfully deleted
     }
 }
@@ -125,10 +119,10 @@ Use the menuID to tell the SDLCore which item to delete using the `SDLDeleteSubM
 
 #### Objective-C
 ```objc
-SDLDeleteSubMenu* deleteSubMenu = [[SDLDeleteSubMenu alloc] initWithId:<#Id of Sub Menu Item to Delete#>];
+SDLDeleteSubMenu *deleteSubMenu = [[SDLDeleteSubMenu alloc] initWithId:<#Id of Sub Menu Item to Delete#>];
 
 [self.sdlManager sendRequest:deleteSubMenu withResponseHandler:^(SDLRPCRequest *request, SDLRPCResponse *response, NSError *error) {
-  if ([response.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+  if ([response.resultCode isEqualToEnum:SDLResultSuccess]) {
     // The sub menu was successfully deleted
   }
 }];
@@ -139,7 +133,7 @@ SDLDeleteSubMenu* deleteSubMenu = [[SDLDeleteSubMenu alloc] initWithId:<#Id of S
 let deleteSubMenu = SDLDeleteSubMenu(id: <#Id of Sub Menu Item to Delete#>)!
 
 sdlManager.send(deleteSubMenu) { (request, response, error) in
-    if response?.resultCode == .success() {
+    if response?.resultCode == .success {
         // The sub menu was successfully deleted
     }
 }
@@ -149,7 +143,7 @@ sdlManager.send(deleteSubMenu) { (request, response, error) in
 ![Perform Interaction Layout](assets/PerformInteractionListOnly.png)
 Custom menus, called **perform interactions**, are one level deep, however, you can create submenus by triggering another perform interaction when the user selects a row in a menu. Perform interactions can be set up to recognize speech, so a user can select an item in the menu by speaking their preference rather than physically selecting the item.
 
- Perform interactions are created by sending two different RPCs. First a `SDLCreateInteractionChoiceSet` RPC must be sent. This RPC sends a list of items that will show up in the menu. When the request has been registered successfully, then a `SDLPerformInteraction` RPC is sent. The `SDLPerformInteraction` RPC sends the formatting requirements, the voice-recognition commands, and a timeout command.
+Perform interactions are created by sending two different RPCs. First a `SDLCreateInteractionChoiceSet` RPC must be sent. This RPC sends a list of items that will show up in the menu. When the request has been registered successfully, then a `SDLPerformInteraction` RPC is sent. The `SDLPerformInteraction` RPC sends the formatting requirements, the voice-recognition commands, and a timeout command.
 
 #### Create a Set of Custom Menu Items
 Each menu item choice defined in `SDLChoice` should be assigned a unique id. The choice set in `SDLCreateInteractionChoiceSet` should also have its own unique id.
@@ -161,7 +155,7 @@ SDLChoice* choice = [[SDLChoice alloc] initWithId:<#Unique Id#> menuName:@"<#Men
 SDLCreateInteractionChoiceSet* createRequest = [[SDLCreateInteractionChoiceSet alloc] initWithId:<#Unique Id#> choiceSet:@[choice]];
 
 [self.sdlManager sendRequest:createRequest withResponseHandler:^(SDLRPCRequest *request, SDLRPCResponse *response, NSError *error) {
-    if ([response.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    if ([response.resultCode isEqualToEnum:SDLResultSuccess]) {
       // The request was successful, now send the SDLPerformInteraction RPC
     }
 }];
@@ -169,12 +163,12 @@ SDLCreateInteractionChoiceSet* createRequest = [[SDLCreateInteractionChoiceSet a
 
 #### Swift
 ```swift
-let choice = SDLChoice(id: <#Unique Id#>, menuName: "<#Menu Title#>", vrCommands: ["<#Menu Command#>"])!
+let choice = SDLChoice(id: <#Unique Id#>, menuName: "<#Menu Title#>", vrCommands: ["<#Menu Command#>"])
 
-let createRequest = SDLCreateInteractionChoiceSet(id: <#Unique Id#>, choiceSet: [choice])!
+let createRequest = SDLCreateInteractionChoiceSet(id: <#Unique Id#>, choiceSet: [choice])
 
 sdlManager.send(createRequest) { (request, response, error) in
-    if response?.resultCode == .success() {
+    if response?.resultCode == .success {
     		// The request was successful, now send the SDLPerformInteraction RPC
     }
 }
@@ -185,16 +179,16 @@ Once the set of menu items has been sent to SDL Core, send a `SDLPerformInteract
 
 #### Objective-C
 ```objc
-SDLPerformInteraction* performInteraction = [[SDLPerformInteraction alloc] initWithInitialPrompt:nil initialText:@"<#Text Displayed When Shown#>" interactionChoiceSetID:<#SDLCreateInteractionChoiceSet id#>];
+SDLPerformInteraction* performInteraction = [[SDLPerformInteraction alloc] initWithInitialPrompt:@"<#Prompt spoken when shown#>" initialText:@"<#Text Displayed When Shown#>" interactionChoiceSetID:<#SDLCreateInteractionChoiceSet id#>];
 ```
 
 #### Swift
 ```swift
-let performInteraction = SDLPerformInteraction(initialPrompt: nil, initialText: "<#Text Displayed When Shown#>", interactionChoiceSetID: <#SDLCreateInteractionChoiceSet id#>)!
+let performInteraction = SDLPerformInteraction(initialPrompt: "<#Prompt spoken when shown#>", initialText: "<#Text Displayed When Shown#>", interactionChoiceSetID: <#SDLCreateInteractionChoiceSet id#>)
 ```
 
 #### Interaction Mode
-The interaction mode specifies the way the user is prompted to make a section and the way in which the user’s selection is recorded.
+The interaction mode specifies the way the user is prompted to make a section and the way in which the user’s selection is recorded. You may wish to use "Both" if the user activates the menu with voice, and "Manual Only" if the user activates the menu with touch.
 
 | Interaction Mode  | Description |
 | ----------------- | ----------- |
@@ -204,13 +198,14 @@ The interaction mode specifies the way the user is prompted to make a section an
 
 #### Objective-C
 ```objc
-performInteraction.interactionMode = SDLInteractionMode.MANUAL_ONLY;
+performInteraction.interactionMode = SDLInteractionModeManualOnly;
 ```
 
 #### Swift
 ```swift
-performInteraction.interactionMode = .manual_ONLY()
+performInteraction.interactionMode = .manualOnly
 ```
+
 #### VR Interaction Mode
 ##### Ford HMI
 ![VR Perform Interaction](assets/PerformInteractionVROnly.png)
@@ -231,17 +226,17 @@ The items in the perform interaction can be shown as a grid of buttons (with opt
 | Keyboard         | A keyboard shows up immediately in the HMI |
 
 !!! note
-Keyboard is currently only supported for the navigation app type.
+Keyboard is currently only supported for the navigation app type and it's use is slightly different. See [mobile navigation](Mobile Navigation/Keyboard Input) for more details.
 !!!
 
 #### Objective-C
 ```objc
-performInteraction.interactionLayout = SDLLayoutMode.LIST_ONLY;
+performInteraction.interactionLayout = SDLLayoutModeListOnly;
 ```
 
 #### Swift
 ```swift
-performInteraction.interactionLayout = .list_ONLY()
+performInteraction.interactionLayout = .listOnly
 ```
 
 #### Icon Only Interaction Layout
@@ -261,8 +256,8 @@ A text-to-speech chunk is a text phrase or prerecorded sound that will be spoken
 
 #### Objective-C
 ```objc
-SDLTTSChunk* ttsChunk = [[SDLTTSChunk alloc] initWithText:@"<#Text to Speak#>" type:SDLSpeechCapabilities.TEXT];
-performInteraction.initialPrompt = [NSMutableArray arrayWithObject:ttsChunk];
+SDLTTSChunk* ttsChunk = [[SDLTTSChunk alloc] initWithText:@"<#Text to Speak#>" type:SDLSpeechCapabilitiesText];
+performInteraction.initialPrompt = @[ttsChunk];
 
 // or - more easily
 
@@ -271,8 +266,8 @@ performInteraction.initialPrompt = [SDLTTSChunk textChunksFromString:@"<#Text to
 
 #### Swift
 ```swift
-let ttsChunk = SDLTTSChunk(text: "<#Text to Speak#>", type: .text())
-performInteraction.initialPrompt = NSMutableArray(array: [prompt!])
+let ttsChunk = SDLTTSChunk(text: "<#Text to Speak#>", type: .text
+performInteraction.initialPrompt = [prompt]
 
 // or - more easily
 
@@ -299,11 +294,12 @@ performInteraction.timeout = 30000 // 30 seconds
     if (![response isKindOfClass:SDLPerformInteractionResponse.class]) {
         return;
     }
+
     SDLPerformInteractionResponse* performInteractionResponse = (SDLPerformInteractionResponse*)response;
 
-    if ([performInteractionResponse.resultCode isEqualToEnum:SDLResult.TIMED_OUT]) {
+    if ([performInteractionResponse.resultCode isEqualToEnum:SDLResultTimedOut]) {
         // The custom menu timed out before the user could select an item
-    } else if ([performInteractionResponse.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    } else if ([performInteractionResponse.resultCode isEqualToEnum:SDLResultSuccess]) {
         NSNumber* choiceId = performInteractionResponse.choiceID;
         // The user selected an item in the custom menu
     }
@@ -318,11 +314,10 @@ sdlManager.send(performInteraction) { (request, response, error) in
         return;
     }
 
-
     // Wait for user's selection or for timeout
-    if performInteractionResponse.resultCode == .timed_OUT() {
+    if performInteractionResponse.resultCode == .timedOut {
         // The custom menu timed out before the user could select an item
-    } else if performInteractionResponse.resultCode == .success() {
+    } else if performInteractionResponse.resultCode == .success {
         let choiceId = performInteractionResponse.choiceID
         // The user selected an item in the custom menu
     }
@@ -337,7 +332,7 @@ If the information in the menu is dynamic, then the old interaction choice set n
 SDLDeleteInteractionChoiceSet* deleteRequest = [[SDLDeleteInteractionChoiceSet alloc] initWithId:<#SDLCreateInteractionChoiceSet id#>];
 
 [self.sdlManager sendRequest:deleteRequest withResponseHandler:^(SDLRPCRequest *request, SDLRPCResponse *response, NSError *error) {
-    if ([response.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    if ([response.resultCode isEqualToEnum:SDLResultSuccess]) {
       // The custom menu was deleted successfully
     }
 }];
@@ -348,7 +343,7 @@ SDLDeleteInteractionChoiceSet* deleteRequest = [[SDLDeleteInteractionChoiceSet a
 let deleteRequest = SDLDeleteInteractionChoiceSet(id: <#SDLCreateInteractionChoiceSet id#>)!
 
 sdlManager.send(deleteRequest) { (request, response, error) in
-    if response?.resultCode == .success() {
+    if response?.resultCode == .success {
      	// The custom menu was deleted successfully
     }
 }

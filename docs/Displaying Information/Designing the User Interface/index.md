@@ -35,7 +35,7 @@ To change a template at any time, send a `SDLSetDisplayLayout` RPC to the SDL Co
 ```objc
 SDLSetDisplayLayout* display = [[SDLSetDisplayLayout alloc] initWithPredefinedLayout:SDLPredefinedLayoutGraphicWithText];
 [self.sdlManager sendRequest:display withResponseHandler:^(SDLRPCRequest *request, SDLRPCResponse *response, NSError *error) {
-    if ([response.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    if ([response.resultCode isEqualToEnum:SDLResultSuccess]) {
       // The template has been set successfully
     }
 }];

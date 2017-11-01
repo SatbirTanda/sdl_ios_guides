@@ -73,7 +73,7 @@ dialNumber.number = @"1238675309";
 
     SDLDialNumberResponse* dialNumber = (SDLDialNumberResponse *)response;
     SDLResult *resultCode = dialNumber.resultCode;
-    if (![resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    if (![resultCode isEqualToEnum:SDLResultSuccess]) {
 		if ([resultCode isEqualToEnum:SDLResult.REJECTED]) {
 	        NSLog(@"DialNumber was rejected. Either the call was sent and cancelled or there is no device connected");
 	    } else if ([resultCode isEqualToEnum:SDLResult.DISALLOWED]) {
@@ -104,7 +104,7 @@ sdlManager.send(dialNumber) { (request, response, error) in
         return
     }
     
-    if !resultCode.isEqual(to: SDLResult.success()) {
+    if !resultCode.isEqual(to: .success) {
         if resultCode.isEqual(to: SDLResult.rejected()) {
             print("DialNumber was rejected. Either the call was sent and cancelled or there is no device connected")
         } else if resultCode.isEqual(to: SDLResult.disallowed()) {

@@ -134,7 +134,7 @@ To process the response that we received from an ended audio capture, we use the
     
     SDLPerformAudioPassThruResponse *audioPassThru = (SDLPerformAudioPassThruResponse *)response;
     SDLResult *resultCode = sendLocation.resultCode;
-    if ([resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    if ([resultCode isEqualToEnum:SDLResultSuccess]) {
         // Process audio data    
     } else {
         // Cancel any usage of the audio data
@@ -149,7 +149,7 @@ sdlManager.send(performAudioPassThru) { (request, response, error) in
         return
     }
     
-    if resultCode.isEqual(to: SDLResult.success()) {
+    if resultCode.isEqual(to: .success) {
         // Process audio data
     } else {
         // Cancel any usage of the audio data.

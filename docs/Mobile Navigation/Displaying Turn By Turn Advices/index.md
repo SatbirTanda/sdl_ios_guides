@@ -17,14 +17,14 @@ turnByTurn.navigationText2 = "3 mi"
 turnByTurn.turnIcon = turnIcon
 
 sdlManager.send(turnByTurn) { (request, response, error) in
-    if response?.resultCode.isEqual(to: SDLResult.success()) == false {
+    if response?.resultCode.isEqual(to: .success) == false {
         print("Error sending TBT.")
         return
     }
 
     let alertManeuver = SDLAlertManeuver(tts: "In 3 miles turn right", softButtons: nil)!
     self.sdlManager.send(alertManeuver) { (request, response, error) in
-        if response?.resultCode.isEqual(to: SDLResult.success()) == false {
+        if response?.resultCode.isEqual(to: .success) == false {
             print("Error sending AlertManeuver.")
             return
         }
@@ -45,7 +45,7 @@ turnByTurn.turnIcon = turnIcon;
 
 __weak typeof(self) weakSelf = self;
 [self.sdlManager sendRequest:turnByTurn withResponseHandler:^(SDLRPCRequest *request, SDLRPCResponse *response, NSError *error) {
-    if (![response.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    if (![response.resultCode isEqualToEnum:SDLResultSuccess]) {
         NSLog(@"Error sending TBT.");
         return;
     }
@@ -53,7 +53,7 @@ __weak typeof(self) weakSelf = self;
     typeof(weakSelf) strongSelf = weakSelf;
     SDLAlertManeuver* alertManeuver = [[SDLAlertManeuver alloc] initWithTTS:@"In 3 miles turn right" softButtons:nil];
     [strongSelf.sdlManager sendRequest:alertManeuver withResponseHandler:^(SDLRPCRequest *request, SDLRPCResponse *response, NSError *error) {
-        if (![response.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+        if (![response.resultCode isEqualToEnum:SDLResultSuccess]) {
             NSLog(@"Error sending AlertManeuver.");
             return;
         }
@@ -71,7 +71,7 @@ let turnByTurn = SDLShowConstantTBT()!
 turnByTurn.maneuverComplete = true
 
 sdlManager.send(turnByTurn) { (request, response, error) in
-    if response?.resultCode.isEqual(to: SDLResult.success()) == false {
+    if response?.resultCode.isEqual(to: .success) == false {
         print("Error sending TBT.")
         return
     }
@@ -85,7 +85,7 @@ SDLShowConstantTBT* turnByTurn = [[SDLShowConstantTBT alloc] init];
 turnByTurn.maneuverComplete = @(YES);
 
 [self.sdlManager sendRequest:turnByTurn withResponseHandler:^(SDLRPCRequest *request, SDLRPCResponse *response, NSError *error) {
-    if (![response.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    if (![response.resultCode isEqualToEnum:SDLResultSuccess]) {
         NSLog(@"Error sending TBT.");
         return;
     }
