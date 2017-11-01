@@ -79,7 +79,7 @@ The connect method will be implemented later. To see a full example, navigate to
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   // Initialize and start the proxy
-  [[ProxyManager sharedManager] connect];
+  [[ProxyManager sharedManager] start];
 }
 
 @end
@@ -90,7 +90,7 @@ The connect method will be implemented later. To see a full example, navigate to
 class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
     // Initialize and start the proxy
-    ProxyManager.shared.connect()
+    ProxyManager.shared.start()
 
     return true
   }
@@ -355,7 +355,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ProxyManager : NSObject
 
 + (instancetype)sharedManager;
-- (void)connect;
+- (void)start;
 
 @end
 
@@ -364,7 +364,7 @@ NS_ASSUME_NONNULL_END
 
 ProxyManager.m
 ```objc
-#import "SmartDeviceLink.h"
+#import <SmartDeviceLink/SmartDeviceLink.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -409,14 +409,14 @@ static NSString* const AppId = @"<#App Id#>";
     lifecycleConfiguration.shortAppName = @"<#Shortened App Name#>";
     lifecycleConfiguration.appType = [SDLAppHMIType MEDIA];
     
-    SDLConfiguration* configuration = [SDLConfiguration configurationWithLifecycle:lifecycleConfiguration lockScreen:[SDLLockScreenConfiguration enabledConfiguration]];
+    SDLConfiguration* configuration = [SDLConfiguration configurationWithLifecycle:lifecycleConfiguration lockScreen:[SDLLockScreenConfiguration enabledConfiguration] logging:[SDLLogConfiguration defaultConfiguration]];
 
     self.sdlManager = [[SDLManager alloc] initWithConfiguration:configuration delegate:self];
     
     return self;
 }
 
-- (void)connect {
+- (void)start {
     [self.sdlManager startWithReadyHandler:^(BOOL success, NSError * _Nullable error) {
         if (success) {
             // Your app has successfully connected with the SDL Core
@@ -452,8 +452,7 @@ class ProxyManager: NSObject {
     // Singleton
     static let sharedManager = ProxyManager()
     
-    private override init( ) {
-        
+    private override init() {
         // Used for USB Connection
         let lifecycleConfiguration = SDLLifecycleConfiguration.defaultConfiguration(withAppName: appName, appId: appId)
         
@@ -469,7 +468,7 @@ class ProxyManager: NSObject {
         lifecycleConfiguration.shortAppName = "<#Shortened App Name#>"
         lifecycleConfiguration.appType = .media()
         
-        let configuration = SDLConfiguration(lifecycle: lifecycleConfiguration, lockScreen: .enabled())
+        let configuration = SDLConfiguration(lifecycle: lifecycleConfiguration, lockScreen: .enabled(), logging: .default())
         
         sdlManager = SDLManager(configuration: configuration, delegate: nil)
         
@@ -501,10 +500,10 @@ extension ProxyManager: SDLManagerDelegate {
 ```
 
 ### Implement the SDL Manager Delegate
-The *ProxyManager* class should conform to the `SDLManagerDelegate` protocol. This means that the *Proxy* class must implement the following required functions:
+The *ProxyManager* class should conform to the `SDLManagerDelegate` protocol. This means that the *ProxyManager* class must implement the following required functions:
 
 1. `managerDidDisconnect()` This function is called only once, when the proxy disconnects from the SDL Core. Do any cleanup you need to do in this function.
-2. `hmiLevel(oldLevel: SDLHMILevel!, didChangeToLevel newLevel: SDLHMILevel!)` This function is called when the HMI level changes for the app. The HMI level can be `FULL`, `LIMITED`, `BACKGROUND`, or `NONE`. It is important to note that most RPCs sent while the HMI is in `BACKGROUND` or `NONE` mode will be ignored by the SDL Core.  
+2. `hmiLevel(oldLevel: SDLHMILevel!, didChangeToLevel newLevel: SDLHMILevel!)` This function is called when the HMI level changes for the app. The HMI level can be `FULL`, `LIMITED`, `BACKGROUND`, or `NONE`. It is important to note that most RPCs sent while the HMI is in `BACKGROUND` or `NONE` mode will be ignored by the SDL Core.
 
 ### The Different HMI Levels:
 Please refer to [Knowing the In-Car UI Status](Knowing the In-Car UI Status) for information about HMI levels.
