@@ -507,3 +507,6 @@ The *ProxyManager* class should conform to the `SDLManagerDelegate` protocol. Th
 
 ### The Different HMI Levels:
 Please refer to [Knowing the In-Car UI Status](Knowing the In-Car UI Status) for information about HMI levels.
+
+### Where to go from here
+You should now be able to connect to a head unit or emulator. From here, [learn about designing a user interface](Displaying Information/Designing a User Interface). For further details on connecting, see (Getting Started/Connecting to a SDL Core).
