@@ -1,5 +1,5 @@
 ## Setting the Navigation Destination
-Setting a Navigation Destination allows you to send a GPS location that you would like to prompt that user to navigate to using their embedded navigation. When using the `SendLocation` RPC, you will not receive a callback about how the user interacted with this location, only if it was successfully sent to Core and received. It will be handled by Core from that point on using the embedded navigation system.
+Setting a Navigation Destination allows you to send a GPS location, prompting the user to navigate to that location using their embedded navigation. When using the `SendLocation` RPC, you will not receive a callback about how the user interacted with this location, only if it was successfully sent to Core and received. It will be handled by Core from that point on using the embedded navigation system.
 
 !!! note
 This currently is only supported for Embedded Navigation. This does not work with Mobile Navigation Apps at this time.
@@ -17,11 +17,7 @@ SendLocation has 3 possible results that you should expect:
 3. DISALLOWED - Your app does not have permission to use SendLocation.
 
 ### Detecting if SendLocation is Available
-`SendLocation` is a newer RPC, so there is a possibility that not all head units will support it, especially if you are connected to a head unit that does not have an embedded navigation. To see if SendLocation is supported, you may look at `SDLManager`'s `registerResponse` property after the ready handler is called. Or, you may use `SDLManager`'s `permissionManager` property to ask for the permission status of `SendLocation`.
-
-!!! note 
-If you need to know how to create and setup `SDLManager`, please see [Getting Started > Integration Basics](Getting Started/Integration Basics).
-!!!
+To check if SendLocation is supported, you may look at `SDLManager`'s `registerResponse` property after the ready handler is called. Or, you may use `SDLManager`'s `permissionManager` property to ask for the permission status of `SendLocation`.
 
 #### Objective-C
 ```objc
@@ -62,21 +58,17 @@ To use SendLocation, you must at least include the Longitude and Latitude of the
 ```objc
 SDLSendLocation *sendLocation = [[SDLSendLocation alloc] initWithLongitude:-97.380967 latitude:42.877737 locationName:@"The Center" locationDescription:@"Center of the United States" address:@[@"900 Whiting Dr", @"Yankton, SD 57078"] phoneNumber:nil image:nil];
 [self.sdlManager sendRequest:sendLocation withResponseHandler:^(__kindof SDLRPCRequest * _Nullable request, __kindof SDLRPCResponse * _Nullable response, NSError * _Nullable error) {
-    if (error) {
+    if (error || ![response isKindOfClass:SDLSendLocationResponse.class]) {
         NSLog(@"Encountered Error sending SendLocation: %@", error);
-        return;
-    }
-    
-    if (![response isKindOfClass:SDLSendLocationResponse.class]) {
         return;
     }
     
     SDLSendLocationResponse *sendLocation = (SDLSendLocationResponse *)response;
     SDLResult *resultCode = sendLocation.resultCode;
     if (![resultCode isEqualToEnum:SDLResultSuccess]) {
-        if ([resultCode isEqualToEnum:SDLResult.INVALID_DATA]) {
+        if ([resultCode isEqualToEnum:SDLResultInvalidData]) {
             NSLog(@"SendLocation was rejected. The request contained invalid data.");
-        } else if ([resultCode isEqualToEnum:SDLResult.DISALLOWED]) {
+        } else if ([resultCode isEqualToEnum:SDLResultDisallowed]) {
             NSLog(@"Your app is not allowed to use SendLocation");
         } else {
             NSLog(@"Some unknown error has occured!");
@@ -90,7 +82,7 @@ SDLSendLocation *sendLocation = [[SDLSendLocation alloc] initWithLongitude:-97.3
 
 #### Swift
 ```swift
-let sendLocation = SDLSendLocation(longitude: -97.380967, latitude: 42.877737, locationName: "The Center", locationDescription: "Center of the United States", address: ["900 Whiting Dr", "Yankton, SD 57078"], phoneNumber: nil, image: nil)!
+let sendLocation = SDLSendLocation(longitude: -97.380967, latitude: 42.877737, locationName: "The Center", locationDescription: "Center of the United States", address: ["900 Whiting Dr", "Yankton, SD 57078"], phoneNumber: nil, image: nil)
 sdlManager.send(sendLocation) { (request, response, error) in
     guard let response = response as? SDLSendLocationResponse,
         let resultCode = response.resultCode else {
@@ -103,9 +95,9 @@ sdlManager.send(sendLocation) { (request, response, error) in
     }
     
     if !resultCode.isEqual(to: .success) {
-        if resultCode.isEqual(to: SDLResult.invalid_DATA()) {
+        if resultCode.isEqual(to: .invalidData) {
             print("SendLocation was rejected. The request contained invalid data.")
-        } else if resultCode.isEqual(to: SDLResult.disallowed()) {
+        } else if resultCode.isEqual(to: .disallowed) {
             print("Your app is not allowed to use SendLocation")
         } else {
             print("Some unknown error has occured!")
