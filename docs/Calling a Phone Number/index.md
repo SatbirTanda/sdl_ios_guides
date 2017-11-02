@@ -21,32 +21,33 @@ If you need to know how to create and setup `SDLManager`, please see [Getting St
 
 #### Objective-C
 ```objc
-__weak typeof (self) weakSelf = self;
+SDLHMICapabilities *hmiCapabilities = self.sdlManager.registerResponse.hmiCapabilities;
+BOOL isPhoneCallSupported = NO;
+if (hmiCapabilities != nil) {
+    isPhoneCallSupported = hmiCapabilities.phoneCall.boolValue;
+} 
+
 [self.sdlManager startWithReadyHandler:^(BOOL success, NSError * _Nullable error) {
     if (!success) {
         NSLog(@"SDL errored starting up: %@", error);
         return;
-    } 
+    }
 
-    SDLHMICapabilities *hmiCapabilities = weakSelf.sdlManager.registerResponse.hmiCapabilities;
-    BOOL isPhoneCallSupported = NO;
-    if (hmiCapabilities != nil) {
-        isPhoneCallSupported = hmiCapabilities.phoneCall.boolValue;
-    } 
+    // Succeeded
 }];
 ```
 
 #### Swift
 ```swift
+var isPhoneCallSupported = false
+if let hmiCapabilities = self.sdlManager.registerResponse?.hmiCapabilities {
+    isPhoneCallSupported = hmiCapabilities.phoneCall.boolValue
+}
+
 sdlManager.start { (success, error) in
     if success == false {
         print("SDL errored starting up: \(error)")
         return
-    }
-    
-    var isPhoneCallSupported = false
-    if let hmiCapabilities = self.sdlManager.registerResponse?.hmiCapabilities {
-        isPhoneCallSupported = hmiCapabilities.phoneCall.boolValue
     }
 }
 ```
@@ -62,21 +63,17 @@ SDLDialNumber *dialNumber = [[SDLDialNumber alloc] init];
 dialNumber.number = @"1238675309";
 
 [self.sdlManager sendRequest:dialNumber withResponseHandler:^(__kindof SDLRPCRequest * _Nullable request, __kindof SDLRPCResponse * _Nullable response, NSError * _Nullable error) {
-    if (error) {
+    if (error != nil || ![response isKindOfClass:SDLDialNumberResponse.class]) {
         NSLog(@"Encountered Error sending DialNumber: %@", error);
-        return;
-    }
-    
-    if (![response isKindOfClass:SDLDialNumberResponse.class]) {
         return;
     }
 
     SDLDialNumberResponse* dialNumber = (SDLDialNumberResponse *)response;
     SDLResult *resultCode = dialNumber.resultCode;
     if (![resultCode isEqualToEnum:SDLResultSuccess]) {
-		if ([resultCode isEqualToEnum:SDLResult.REJECTED]) {
+		if ([resultCode isEqualToEnum:SDLResultRejected]) {
 	        NSLog(@"DialNumber was rejected. Either the call was sent and cancelled or there is no device connected");
-	    } else if ([resultCode isEqualToEnum:SDLResult.DISALLOWED]) {
+	    } else if ([resultCode isEqualToEnum:SDLResultDisallowed]) {
 	        NSLog(@"Your app is not allowed to use DialNumber");
 	    } else { 	
 	    	NSLog(@"Some unknown error has occured!");
@@ -90,7 +87,7 @@ dialNumber.number = @"1238675309";
 
 #### Swift
 ```swift
-let dialNumber = SDLDialNumber()!
+let dialNumber = SDLDialNumber()
 dialNumber.number = "1238675309"
 
 sdlManager.send(dialNumber) { (request, response, error) in
@@ -105,9 +102,9 @@ sdlManager.send(dialNumber) { (request, response, error) in
     }
     
     if !resultCode.isEqual(to: .success) {
-        if resultCode.isEqual(to: SDLResult.rejected()) {
+        if resultCode.isEqual(to: .rejected) {
             print("DialNumber was rejected. Either the call was sent and cancelled or there is no device connected")
-        } else if resultCode.isEqual(to: SDLResult.disallowed()) {
+        } else if resultCode.isEqual(to: .disallowed) {
             print("Your app is not allowed to use DialNumber")
         } else {
             print("Some unknown error has occured!")

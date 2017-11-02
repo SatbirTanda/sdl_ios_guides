@@ -21,32 +21,32 @@ To check if SendLocation is supported, you may look at `SDLManager`'s `registerR
 
 #### Objective-C
 ```objc
+SDLHMICapabilities *hmiCapabilities = self.sdlManager.registerResponse.hmiCapabilities;
+BOOL isNavigationSupported = NO;
+if (hmiCapabilities != nil) {
+    isNavigationSupported = hmiCapabilities.navigation.boolValue;
+}
+
 __weak typeof (self) weakSelf = self;
 [self.sdlManager startWithReadyHandler:^(BOOL success, NSError * _Nullable error) {
     if (!success) {
         NSLog(@"SDL errored starting up: %@", error);
         return;
-    } 
-
-    SDLHMICapabilities *hmiCapabilities = weakSelf.sdlManager.registerResponse.hmiCapabilities;
-    BOOL isNavigationSupported = NO;
-    if (hmiCapabilities != nil) {
-        isNavigationSupported = hmiCapabilities.navigation.boolValue;
-    } 
+    }
 }];
 ```
 
 #### Swift
 ```swift
+var isNavigationSupported = false
+if let hmiCapabilities = self.sdlManager.registerResponse?.hmiCapabilities {
+    isNavigationSupported = hmiCapabilities.navigation.boolValue
+}
+
 sdlManager.start { (success, error) in
     if success == false {
         print("SDL errored starting up: \(error)")
         return
-    }
-    
-    var isNavigationSupported = false
-    if let hmiCapabilities = self.sdlManager.registerResponse?.hmiCapabilities {
-        isNavigationSupported = hmiCapabilities.navigation.boolValue
     }
 }
 ```
