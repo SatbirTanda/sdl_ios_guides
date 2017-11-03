@@ -1,6 +1,6 @@
 {
     "Authors": [
-        "Alexander Muller", "Timur Pulathaneli", "Joel Fischer"
+        "Alexander Muller", "Timur Pulathaneli", "Joel Fischer", "Nicole Yarroch"
     ],
     "languages": [
         "en"
@@ -77,10 +77,13 @@
                   "name": "Touch Input"
               },
               {
+                  "name": "Supporting Haptic Input"
+              },
+              {
                   "name": "Keyboard Input"
               },
               {
-                  "name": "Displaying Turn By Turn Advices"
+                  "name": "Displaying Turn Directions"
               }
             ]
         },

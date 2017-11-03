@@ -7,7 +7,7 @@ Navigation applications have support for touch events, including both single and
 `SDLTouchManager` has multiple callbacks that will ease the implementation of touch events. 
 
 !!! IMPORTANT
-The view passed from the following callbacks are dependent on using the built-in focusable item manager to send haptic rects. See [detecting focusable items](Mobile Navigation/Automatically Detecting Focusable Items) for more information.
+The view passed from the following callbacks are dependent on using the built-in focusable item manager to send haptic rects. See [supporting haptic input](Mobile Navigation/Supporting Haptic Input) "Automatic Focusable Rects" for more information.
 !!!
 
 The following callbacks are provided:

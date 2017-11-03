@@ -1,6 +1,12 @@
-# ![logo](assets/AppIcon.png) SmartDeviceLink (SDL) iOS Relay
+SDL Relay
 
-The SmartDeviceLink (SDL) iOS Relay app is a debugging tool for developers building iOS applications that communicate with a [SDL Core](https://github.com/smartdevicelink/sdl_core) via a USB cable. Testing is done over a TCP/IP connection. During testing developers can easily see logs of in-going/out-going remote procedure calls (RPCs) in Xcode's debug console, thus making debugging easier and faster.
+# ![logo](assets/AppIcon.png)
+
+!!! NOTE
+A better method than using the iOS Relay app is to use Xcode 9 / iOS 11 wireless debugging. This allows you to use the IAP connection instead of the TCP connection and can be more reliable. The Relay app is still useful if your phone is not on iOS 11.
+!!!
+
+The SmartDeviceLink (SDL) iOS Relay app is a debugging tool for developers building iOS applications that communicate with a vehicle head unit requiring a USB cable. Testing is done over a TCP/IP connection. During testing developers can easily see logs of in-going/out-going remote procedure calls (RPCs) in Xcode's debug console, thus making debugging easier and faster.
 
 !!! IMPORTANT
 Make sure that both the SDL iOS Relay app and the app being tested are connected to the **same** wifi network.
