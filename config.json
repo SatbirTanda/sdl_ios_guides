@@ -94,6 +94,9 @@
             "name": "Developer Tools",
             "navigation" : [
                 {
+                  "name": "Configuring SDL Logging"
+                },
+                {
                     "name": "Relay"
                 },
                 {
