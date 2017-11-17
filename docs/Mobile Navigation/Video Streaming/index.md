@@ -11,7 +11,7 @@ It is not recommended to alter the default video format and resolution behavior 
 !!!
 
 ### Sending Data to the Stream
-To check whether or not you are ready to start sending data to the video stream, use the `videoStreamingPaused` property of `SDLStreamingMediaManager` (this will automatically also check for `videoConnected`). If you are connected and not paused, you should start sending data. When you become paused, the stream will automatically start rejecting your navigation frames.
+To check whether or not you are ready to start sending data to the video stream, watch for the `SDLVideoStreamDidStartNotification` and `SDLVideoStreamDidStopNotification` notifications. When you receive the start notification, start sending data; stop when you receive the stop notification. There are parallel notifications for audio streaming.
 
 Sending video data to the head unit must be provided to `SDLStreamingMediaManager` as a `CVImageBufferRef` (Apple documentation [here](https://developer.apple.com/library/mac/documentation/QuartzCore/Reference/CVImageBufferRef/)). Once the video stream has started, you will not see video appear until a few frames have been received. To send a frame, refer to the snippet below:
 
