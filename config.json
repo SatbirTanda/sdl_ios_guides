@@ -97,12 +97,23 @@
                   "name": "Configuring SDL Logging"
                 },
                 {
-                    "name": "Relay"
+                  "name": "Relay"
                 },
                 {
-                    "name": "RPC Builder"
+                  "name": "RPC Builder"
                 }
             ]
-        }
+        },
+        {
+          "name": "Migrating to Newer SDL iOS Versions",
+          "navigation": [
+            {
+              "name": "Updating to v4.3+",
+            },
+            {
+              "name": "Updating to v5.0+"
+            }
+          ]
+        },
     ]
 }
