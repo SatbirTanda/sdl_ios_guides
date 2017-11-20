@@ -1,6 +1,6 @@
 ## SDK Configuration
 ### 1. Get  a SDL Core
-If you do not have an SDL enabled head unit for testing, [manticore](https://smartdevicelink.com/resources/manticore/) may work for you. Manticore is an emulator that lets you simulate a head unit and test your app against it using TCP connections.
+If you do not have an SDL enabled head unit for testing, [Manticore](https://smartdevicelink.com/resources/manticore/) may work for you. Manticore is a web-based emulator for testing how your app reacts to real-world vehicle events, on-screen interactions, and voice recognition—just like it would in a vehicle.
 
 You can also build the [sdl_core project](https://github.com/smartdevicelink/sdl_core) on an Ubuntu VM or computer. The sdl_core project is an emulator that lets you simulate sending and receiving remote procedure calls between a smartphone app and a SDL Core.
 
