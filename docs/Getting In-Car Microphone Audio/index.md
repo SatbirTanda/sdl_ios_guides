@@ -104,7 +104,7 @@ let endAudioPassThru = SDLEndAudioPassThru()
 sdlManager.send(endAudioPassThru)
 ```
 
-You will receive a `resultCode` of `SUCCESS`, and should expect to handle this audio passthrough as though it was successful.
+You will receive a `resultCode` of `SUCCESS`, and should expect to handle this audio pass thru as though it was successful.
 
 ### Handling the Response
 To process the response that we received from an ended audio capture, we use the `withResponseHandler` property in `SDLManager`'s `send(_ :)` function.
