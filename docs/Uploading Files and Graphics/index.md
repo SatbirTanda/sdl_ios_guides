@@ -141,7 +141,7 @@ sdlManager.fileManager.upload(files: [file], progressHandler: { (fileName, uploa
 ```
 
 ### File Persistance
-`SDLFile`, and it's subclass `SDLArtwork`, support uploading persistant files, i.e. images that do not become deleted the car turns off. Persistance should be used for images relating to your UI, such as soft button images, and not for dynamic aspects, such as Album Artwork.
+`SDLFile`, and its subclass `SDLArtwork` support uploading persistant files, i.e. images that do not become deleted when the car turns off. Persistance should be used for images relating to your UI, such as soft button images, and not for dynamic aspects, such as Album Artwork.
 
 #### Objective-C
 ```objc
@@ -153,8 +153,8 @@ file.persistent = YES;
 file.persistent = true
 ```
 
-!!! note
-Be aware that persistance will not work if space on the head unit is limited. `SDLFileManager` will always handle uploading images if they are non-existant.
+!!! NOTE
+Be aware that persistance will not work if space on the head unit is limited. `SDLFileManager` will always handle uploading images if they are non-existent.
 !!!
 
 ### Overwrite Stored Files

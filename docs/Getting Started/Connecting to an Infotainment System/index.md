@@ -20,8 +20,8 @@ Ford TDKs do not currently support IAP over Bluetooth.
 !!!
 
 #### Debugging
-If you are testing with a vehicle head unit or TDK and wish to see debug logs in Xcode while the app is running, you must either use another app called the [relay app](https://github.com/smartdevicelink/relay_app_ios) to help you connect to the device, or you may use [Xcode 9 / iOS 11 wireless debugging](https://developer.apple.com/videos/play/wwdc2017/404/). When using the relay app, make sure to implement a TCP connection, if using iOS 11 wireless debuggin, implement a IAP connection. Please see the [guide](Developer Tools/Relay) for the relay app to learn how to setup the connection between the device, the relay app and your app.
+If you are testing with a vehicle head unit or TDK and wish to see debug logs in Xcode while the app is running, you must either use another app called the [relay app](https://github.com/smartdevicelink/relay_app_ios) to help you connect to the device, or you may use [Xcode 9 / iOS 11 wireless debugging](https://developer.apple.com/videos/play/wwdc2017/404/). When using the relay app, make sure to implement a TCP connection, if using iOS 11 wireless debugging, implement a IAP connection. Please see the [guide](Developer Tools/Relay) for the relay app to learn how to set up the connection between the device, the relay app and your app.
 
 !!! NOTE
-The same issues apply when connecting the Relay app with a TDK or head unit as do when connecting to SDL Core. Please see the issues above, under the *Connect with an Emulator* heading.
+The same issues apply when connecting the relay app with a TDK or head unit as do when connecting to SDL Core. Please see the issues above, under the *Connect with an Emulator* heading.
 !!!

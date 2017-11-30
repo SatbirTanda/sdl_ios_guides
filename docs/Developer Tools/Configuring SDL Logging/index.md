@@ -21,17 +21,17 @@ Currently, SDL provides three output formats for logs (for example into the cons
 
 Simple:
 ```
-09:52:07:324 🔹 (SDL)Protocol – a random test i guess
+09:52:07:324 🔹 (SDL)Protocol – I'm a log!
 ```
 
 Default:
 ```
-09:52:07:324 🔹 (SDL)Protocol:SDLV2ProtocolHeader:25 – Some log message
+09:52:07:324 🔹 (SDL)Protocol:SDLV2ProtocolHeader:25 – I'm also a log!
 ```
 
 Detailed:
 ```
-09:52:07:324 🔹 DEBUG com.apple.main-thread:(SDL)Protocol:[SDLV2ProtocolHeader parse:]:74 – Some log message
+09:52:07:324 🔹 DEBUG com.apple.main-thread:(SDL)Protocol:[SDLV2ProtocolHeader parse:]:74 – Me three!
 ```
 
 #### Synchronicity
@@ -41,7 +41,7 @@ The configuration provides two properties, `asynchronous` and `errorsAsynchronou
 The `globalLogLevel` defines which logs will be logged to the target outputs. For example, if you set the log level to `debug`, all error, warning, and debug level logs will be logged, but verbose level logs will not be logged.
 
 !!! NOTE
-Although the `default` log level is defined in the SDLLogLevel enum, it should not be used as a global log level. See the API documentation for more detail.
+Although the `default` log level is defined in the SDLLogLevel enum, it should not be used as a global log level. See the [API documentation](https://smartdevicelink.com/en/docs/iOS/master/Enums/SDLLogLevel/) for more detail.
 !!!
 
 ### Targets

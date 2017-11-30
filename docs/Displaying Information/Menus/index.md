@@ -188,7 +188,7 @@ let performInteraction = SDLPerformInteraction(initialPrompt: "<#Prompt spoken w
 ```
 
 #### Interaction Mode
-The interaction mode specifies the way the user is prompted to make a section and the way in which the user’s selection is recorded. You may wish to use "Both" if the user activates the menu with voice, and "Manual Only" if the user activates the menu with touch.
+The interaction mode specifies the way the user is prompted to make a selection and the way in which the user’s selection is recorded. You may wish to use "Both" if the user activates the menu with voice, and "Manual Only" if the user activates the menu with touch.
 
 | Interaction Mode  | Description |
 | ----------------- | ----------- |
@@ -225,8 +225,8 @@ The items in the perform interaction can be shown as a grid of buttons (with opt
 | List with search | A vertical list of text with a search field in the HMI |
 | Keyboard         | A keyboard shows up immediately in the HMI |
 
-!!! note
-Keyboard is currently only supported for the navigation app type and it's use is slightly different. See [mobile navigation](Mobile Navigation/Keyboard Input) for more details.
+!!! NOTE
+Keyboard is currently only supported for the navigation app type and its use is slightly different. See [mobile navigation](Mobile Navigation/Keyboard Input) for more details.
 !!!
 
 #### Objective-C

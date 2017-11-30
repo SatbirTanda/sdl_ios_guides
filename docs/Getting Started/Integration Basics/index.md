@@ -168,7 +168,7 @@ class ProxyManager: NSObject {
 ```
 
 ### 1. Create a Lifecycle Configuration   
-In order to instantiate the `SDLManager` class, you must first configure an `SDLConfiguration`. To start, we will look at the `SDLLifecycleConfiguration`. You will at minimum need an `SDLLifecycleConfiguration` instance with the application name and application id. During the development stage, a dummy app id is usually sufficient. For more information about obtaining an application id, please consult the *SDK Configuration* section of this guide. You must also decide which network configuration to use to connect the app to the SDL Core. Optional, but recommended, configuration properties include short app name, app icon, and app type.
+In order to instantiate the `SDLManager` class, you must first configure an `SDLConfiguration`. To start, we will look at the `SDLLifecycleConfiguration`. You will at minimum need a `SDLLifecycleConfiguration` instance with the application name and application id. During the development stage, a dummy app id is usually sufficient. For more information about obtaining an application id, please consult the [SDK Configuration](Getting Started/SDL Configuration) section of this guide. You must also decide which network configuration to use to connect the app to the SDL Core. Optional, but recommended, configuration properties include short app name, app icon, and app type.
 
 #### Network Connection Type
 There are two different ways to connect your app to a SDL Core: with a TCP (Wi-Fi) network connection or with an iAP (USB / Bluetooth) network connection. Use TCP for debugging and use iAP for production level apps.
@@ -205,7 +205,7 @@ If you are using a head unit or TDK, and are using the [relay app](https://githu
 
 
 ### 2. Short app name (optional)
-This is a shortened version of your app name that is substituted when the full app name will not be visible due to character count constraints. You will want to amek this as short as possible.
+This is a shortened version of your app name that is substituted when the full app name will not be visible due to character count constraints. You will want to make this as short as possible.
 
 #### Objective-C
 ```objc
@@ -243,7 +243,7 @@ Persistent files are used when the image ought to remain on the remote system be
 !!!
 
 ### 4. App Type (optional)
-The app type is used by car manufacturers to decide how to categorize your app. Each car manufacturer has different categorization system. For example, if you set your app type as media, your app will also show up in the audio tab as well as the apps tab of Ford’s SYNC3 head unit. The app type options are: default, communication, media (i.e. music/podcasts/radio), messaging, navigation, projection, information, and social.
+The app type is used by car manufacturers to decide how to categorize your app. Each car manufacturer has a different categorization system. For example, if you set your app type as media, your app will also show up in the audio tab as well as the apps tab of Ford’s SYNC3 head unit. The app type options are: default, communication, media (i.e. music/podcasts/radio), messaging, navigation, projection, information, and social.
 
 !!! NOTE
 Navigation and projection apps usually require special permissions and use video streaming to project a UI.
@@ -509,4 +509,4 @@ The *ProxyManager* class should conform to the `SDLManagerDelegate` protocol. Th
 Please refer to [Knowing the In-Car UI Status](Knowing the In-Car UI Status) for information about HMI levels.
 
 ### Where to go from here
-You should now be able to connect to a head unit or emulator. From here, [learn about designing a user interface](Displaying Information/Designing a User Interface). For further details on connecting, see (Getting Started/Connecting to a SDL Core).
+You should now be able to connect to a head unit or emulator. From here, [learn about designing a user interface](Displaying Information/Designing a User Interface). For further details on connecting, see [Connecting to a SDL Core](Getting Started/Connecting to a SDL Core).

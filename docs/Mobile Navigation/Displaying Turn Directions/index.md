@@ -1,8 +1,8 @@
 ## Displaying Turn Directions
 
-Currently, to display a Turn by Turn advice, a combination of the `SDLShowConstantTBT` and `SDLAlertManeuver` RPCs must be used. The `SDLShowConstantTBT` RPC involves the data that will be shown on the head unit. The main properties of this object to set are `navigationText1`, `navigationText2`, and `turnIcon`. A best practice for navigation applications is to use the `navigationText1` as the advice to give (Turn Right) and `navigationText2` to provide the distance to that advice (3 mi). When an `SDLAlertManeuver` is sent, you may also include accompanying text that you would like the head unit to speak when an advice is displayed on screen (e.g. In 3 miles turn right.).
+To display a Turn by Turn direction, a combination of the `SDLShowConstantTBT` and `SDLAlertManeuver` RPCs must be used. The `SDLShowConstantTBT` RPC involves the data that will be shown on the head unit. The main properties of this object to set are `navigationText1`, `navigationText2`, and `turnIcon`. A best practice for navigation applications is to use the `navigationText1` as the direction to give (Turn Right) and `navigationText2` to provide the distance to that direction (3 mi). When an `SDLAlertManeuver` is sent, you may also include accompanying text that you would like the head unit to speak when an direction is displayed on screen (e.g. In 3 miles turn right.).
 
-!!! note
+!!! NOTE
 If the connected device has received a phone call in the vehicle, the Alert Maneuver is the only way for your app to inform the user.
 !!!
 
@@ -63,8 +63,8 @@ sdlManager.send(turnByTurn) { [weak self] (request, response, error) in
 
 > Remember when sending a SDLImage, that the image must first be uploaded to the head unit with the FileManager.
 
-### Clearing the Turn by Turn Advice
-To clear a navigation advice from the screen, we send an `SDLShowConstantTBT` with the `maneuverComplete` property as `YES`. This specific RPC does not require an accompanying `SDLAlertManeuver`.
+### Clearing the Turn by Turn Direction
+To clear a navigation direction from the screen, we send an `SDLShowConstantTBT` with the `maneuverComplete` property as `YES`. This specific RPC does not require an accompanying `SDLAlertManeuver`.
 
 #### Objective-C
 ```objc

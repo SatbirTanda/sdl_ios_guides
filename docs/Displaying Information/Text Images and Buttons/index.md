@@ -28,10 +28,10 @@ sdlManager.send(show) { (request, response, error) in
 ```
 
 ### Images
-The position and size of images on the screen is determined by the currently set template. All images must first be uploaded to the remote system using the SDLManager’s [file manager](Uploading Files and Graphics) before being used in a SDLShow RPC. Once the image has been successfully uploaded, the app will be notified in the upload method's completion handler. For information relating to how to upload images, go to the [Uploading Files and Graphics](Uploading Files and Graphics) section.
+The position and size of images on the screen is determined by the currently set template. All images must first be uploaded to the remote system using the SDLManager’s [file manager](Uploading Files and Graphics) before being used in a `SDLShow` RPC. Once the image has been successfully uploaded, the app will be notified in the upload method's completion handler. For information relating to how to upload images, go to the [Uploading Files and Graphics](Uploading Files and Graphics) section.
 
 !!! NOTE
-Some head units you may be connected to may not support images at all. Please consult `RegisterAppInterfaceResponse.displayCapabilities.graphicSupported`.
+Some head units you may be connected to may not support images at all. Please consult the `RegisterAppInterfaceResponse.displayCapabilities.graphicSupported` [documentation](https://smartdevicelink.com/en/docs/iOS/master/Classes/SDLDisplayCapabilities/).
 !!!
 
 #### Show the Image on a Head Unit
