@@ -47,8 +47,8 @@ sdlManager.start { (success, error) in
 }
 ```
 
-### Uploading a File using SDLFileManager
-As of SDL 4.3, we have provided a class that makes managing files easier. `SDLFileManager` handles uploading files, like images, and keeping track of what already exists and what does not. To assist, there are two classes: `SDLFile` and `SDLArtwork`. `SDLFile` is the base class for file uploads and handles pulling data from local `NSURL`s and `NSData`. `SDLArtwork` is subclass of this, and provides additional functionality such as creating a file from a `UIImage`.
+### Uploading an Image using SDLFileManager
+`SDLFileManager` handles uploading files, like images, and keeping track of what already exists and what does not. To assist, there are two classes: `SDLFile` and `SDLArtwork`. `SDLFile` is the base class for file uploads and handles pulling data from local `NSURL`s and `NSData`. `SDLArtwork` is subclass of this, and provides additional functionality such as creating a file from a `UIImage`.
 
 #### Objective-C
 ```objc
@@ -63,7 +63,7 @@ SDLArtwork* file = [SDLArtwork artworkWithImage:image name:@"<#Name to Upload As
 [self.sdlManager.fileManager uploadFile:file completionHandler:^(BOOL success, NSUInteger bytesAvailable, NSError * _Nullable error) {
 	if (error) {
 		if (error.code == SDLFileManagerErrorCannotOverwrite) {
-	        // Attempting to replace a file, but failed due to settings in SDLArtwork.
+	        // Attempting to upload a file with a name that already exists on the head unit, if you want to overwrite the existing file, you need to set the `overwrite` flag on `SDLArtwork`.
 	    } else {
 	        // Error uploading
 	    }
@@ -82,10 +82,10 @@ guard let image = UIImage(named: "<#Image Name#>") else {
 }
 let file = SDLArtwork.artwork(with: image, name: "<#Name to Upload As#>", as: .JPG /* or .PNG */)
 
-sdlManager.fileManager.uploadFile(file) { (success, bytesAvailable, error) in
+sdlManager.fileManager.upload(file: file) { (success, bytesAvailable, error) in
     if let error = error as? NSError {
         if error.code == SDLFileManagerError.cannotOverwrite.rawValue {
-            // Attempting to replace a file, but failed due to settings in SDLArtwork.
+            // Attempting to upload a file with a name that already exists on the head unit, if you want to overwrite the existing file, you need to set the `overwrite` flag on `SDLArtwork`.
         } else {
             // Error uploading
         }
@@ -96,11 +96,52 @@ sdlManager.fileManager.uploadFile(file) { (success, bytesAvailable, error) in
 }
 ```
 
-### File Naming
+!!! IMPORTANT
 The file name can only consist of letters (a-Z) and numbers (0-9), otherwise the SDL Core may fail to find the uploaded file (even if it was uploaded successfully).
+!!!
+
+### Batch Uploading
+You can also batch upload files and be notified when all of the uploads have completed or failed. You can optionally also watch the progress of the batch upload and see when each upload completes.
+
+#### Objective-C
+```objc
+SDLArtwork *file = [SDLArtwork artworkWithImage:image name:@"<#Name to Upload As#>" asImageFormat:SDLArtworkImageFormatJPG /* or SDLArtworkImageFormatPNG */];
+SDLArtwork *file2 = [SDLArtwork artworkWithImage:image name:@"<#Name to Upload As#>" asImageFormat:SDLArtworkImageFormatJPG /* or SDLArtworkImageFormatPNG */];
+
+[self.sdlManager.fileManager uploadFiles:@[<#firstFileName, secondFileName#>] progressHandler:^BOOL(SDLFileName * _Nonnull fileName, float uploadPercentage, NSError * _Nullable error) {
+    // Optional handler, there's another method without this callback
+    // A single file has finished uploading. Use this to check individual errors, use a file as soon as its uploaded, or check the progress of the upload (from 0.0 to 1.0)
+    // Return YES to continue uploading, NO to stop here
+    <#code#>
+} completionHandler:^(NSError * _Nullable error) {
+    // All files have finished uploading or errored
+    // The userInfo of the error will contain type [fileName: error]
+    <#code#>
+}];
+```
+
+#### Swift
+```swift
+guard let image = UIImage(named: "<#Image Name#>") else {
+    print("Error reading from Assets")
+    return
+}
+let file = SDLArtwork.artwork(with: image, name: "<#Name to Upload As#>", as: .JPG /* or .PNG */)
+
+sdlManager.fileManager.upload(files: [file], progressHandler: { (fileName, uploadPercentage, error) -> Bool in
+    // Optional handler, there's another method without this callback
+    // A single file has finished uploading. Use this to check individual errors, use a file as soon as its uploaded, or check the progress of the upload (from 0.0 to 1.0)
+    // Return true to continue uploading, false to stop here
+    <#code#>
+}) { (error) in
+    // All files have finished uploading or errored
+    // The userInfo of the error will contain type [fileName: error]
+    <#code#>
+}
+```
 
 ### File Persistance
-`SDLFile`, and it's subclass `SDLArtwork`, support uploading persistant images, i.e. images that do not become deleted when your application disconnects. Persistance should be used for images relating to your UI, and not for dynamic aspects, such as Album Artwork.
+`SDLFile`, and its subclass `SDLArtwork` support uploading persistant files, i.e. images that do not become deleted when the car turns off. Persistance should be used for images relating to your UI, such as soft button images, and not for dynamic aspects, such as Album Artwork.
 
 #### Objective-C
 ```objc
@@ -112,12 +153,12 @@ file.persistent = YES;
 file.persistent = true
 ```
 
-!!! note
-Be aware that persistance will not work if space on the head unit is limited. `SDLFileManager` will always handle uploading images if they are non-existant. 
+!!! NOTE
+Be aware that persistance will not work if space on the head unit is limited. `SDLFileManager` will always handle uploading images if they are non-existent.
 !!!
 
 ### Overwrite Stored Files
-If a file being uploaded has the same name as an already uploaded image, the new image will be ignored. To override this setting, set the `SDLFile`’s `overwrite` property to true.
+If a file being uploaded has the same name as an already uploaded file, the new file will be ignored. To override this setting, set the `SDLFile`’s `overwrite` property to true.
 
 #### Objective-C
 ```objc
@@ -130,7 +171,7 @@ file.overwrite = true
 ```
 
 ### Check the Amount of File Storage
-To find the amount of file storage left on the head unit, use the `SDLFileManager`’s `bytesAvailable` property.
+To find the amount of file storage left for your app on the head unit, use the `SDLFileManager`’s `bytesAvailable` property.
 
 #### Objective-C
 ```objc
@@ -164,21 +205,43 @@ Use the file manager’s delete request to delete a file associated with a file 
     if (success) {
         // Image was deleted successfully
     }
+    <#code#>
 }];
 ```
 
 #### Swift
 ```swift
-sdlManager.fileManager.deleteRemoteFileWithName("<#Save As Name#>") { (success, bytesAvailable, error) in
+sdlManager.fileManager.delete(fileName: "<#Save As Name#>") { (success, bytesAvailable, error) in
     if success {
         // Image was deleted successfully
     }
+    <#code#>
+}
+```
+
+### Batch Delete Files
+```objc
+[self.sdlManager.fileManager deleteRemoteFileWithNames:@[@"<#Save As Name#>", @"<#Save As Name 2>"] completionHandler:^(NSError *error) {
+    if (error == nil) {
+        // Image was deleted successfully
+    }
+    <#code#>
+}];
+```
+
+#### Swift
+```swift
+sdlManager.fileManager.delete(fileNames: ["<#Save As Name#>", "<#Save as Name 2>"]) { (error) in
+    if success {
+        // Image was deleted successfully
+    }
+    <#code#>
 }
 ```
 
 ## Image Specifics
 ### Image File Type
-Images may be formatted as PNG, JPEG, or BMP. Check the `displayCapability` properties to find out what image formats the head unit supports.
+Images may be formatted as PNG, JPEG, or BMP. Check the `RegisterAppInterfaceResponse.displayCapability` properties to find out what image formats the head unit supports.
 
 ### Image Sizes
 If an image is uploaded that is larger than the supported size, that image will be scaled down to accomodate. All image sizes are available from the `SDLManager`'s `registerResponse` property once in the completion handler for `startWithReadyHandler`.

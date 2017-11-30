@@ -1,4 +1,4 @@
-# RPC Builder v1.2.2
+# RPC Builder
 
 ## Introduction
 The SmartDeviceLink (SDL) RPC Builder app is a free iOS app designed to help developers understand the SDL interface and how remote procedure calls (RPCs) work. Use the app to send and receive RPCs with a SDL Core without writing any code.

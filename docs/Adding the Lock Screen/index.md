@@ -1,9 +1,9 @@
 ## Adding the Lock Screen
-The lock screen is a vital part of SmartDeviceLink, as this does not allow the user to use your application while the vehicle is in motion. Prior to SDL 4.3, creating and maintaining the lock screen was up to the developer to do. Now, SDL takes care of the lock screen for you. It still allows you to use your own view controller if you prefer your own look, but still want the recommended logic that SDL provides for free.
+The lock screen is a vital part of SmartDeviceLink, as the lock screen prevents the user from using your application while the vehicle is in motion. SDL takes care of the lock screen for you. It still allows you to use your own view controller if you prefer your own look, but still want the recommended logic that SDL provides for free.
 
-A benefit to using the provided Lock Screen, is that we also handle support for retrieving a lock screen icon for versions of Core that support it, so that you do not have to be concerned with what car manufacturer you are connected to.
+A benefit to using the provided Lock Screen is that we also handle retrieving a lock screen icon for versions of Core that support it, so that you do not have to be concerned with what car manufacturer you are connected to. If you subclass the provided lock screen, you can do the same in your own lock screen view controller.
 
-If you would not like to use any of the following code, you may use the `SDLLockScreenConfiguration` class function `disabledConfiguration`, and manage the entire lifecycle of the lock screen yourself. 
+If you would not like to use any of the following code, you may use the `SDLLockScreenConfiguration` class function `disabledConfiguration`, and manage the entire lifecycle of the lock screen yourself. However, it is strongly recommended that you use the provided lock screen manager, even if you use your own view controller.
 
 To see where the `SDLLockScreenConfiguration` is used, refer to the [Getting Started > Integration Basics](Getting Started/Integration Basics).
 
@@ -25,7 +25,7 @@ let lockScreenConfiguration = SDLLockScreenConfiguration.enabled()
 ```
 
 ### Customizing the Provided Lock Screen
-If you would like to use the provided lock screen, however would like to add your own appearance to it, we provide that as well. `SDLLockScreenConfiguration` allows you to customize the background color as well as your app's icon. If the app icon is not included, we will use the SDL logo.
+If you would like to use the provided lock screen but would like to add your own appearance to it, we provide that as well. `SDLLockScreenConfiguration` allows you to customize the background color as well as your app's icon. If the app icon is not included, we will use the SDL logo.
 
 ![Custom Lock Screen](/assets/CustomLockScreen.png)
 
@@ -38,8 +38,8 @@ SDLLockScreenConfiguration *lockScreenConfiguration = [SDLLockScreenConfiguratio
 
 #### Swift
 ```swift
-let appIcon = <# Retrieve App Icon #>
-let backgroundColor = <# Desired Background Color #>
+let appIcon: UIImage = <# Retrieve App Icon #>
+let backgroundColor: UIColor = <# Desired Background Color #>
 let lockScreenConfiguration = SDLLockScreenConfiguration.enabledConfiguration(withAppIcon: appIcon, backgroundColor: backgroundColor)
 ```
 
@@ -58,74 +58,5 @@ let lockScreenViewController = <# Initialize Your View Controller #>
 let lockScreenConfiguration = SDLLockScreenConfiguration.enabledConfiguration(with: lockScreenViewController)
 ```
 
-### Retrieving Make and Model
-If you have decided to create your own lock screen, a best practice is to display the OEM you are connect to's logo, as this adds a more personal touch for the end user.
-
-#### Objective-C
-```objc
-__weak typeof (self) weakSelf = self;
-[self.sdlManager startWithReadyHandler:^(BOOL success, NSError * _Nullable error) {
-    if (!success) {
-        NSLog(@"SDL errored starting up: %@", error);
-        return;
-    } 
-
-    SDLVehicleType *vehicleType = weakSelf.sdlManager.registerResponse.vehicleType;
-    NSString *make = vehicleType.make;
-    NSString *model = vehicleType.model;
-}];
-```
-
-#### Swift
-```swift
-sdlManager.start { (success, error) in
-    if success == false {
-        print("SDL errored starting up: \(error)")
-        return
-    }
-    
-    guard let vehicleType = self.sdlManager.registerResponse?.vehicleType,
-    	let make = vehicleType.make,
-    	let model = vehicleType.model else {
-    	// No make/model found.
-    	return
-    } 
-}
-```
-
-### Retrieving Lock Screen URL
-A newer feature that some OEMs may adapt is the ability for the head unit to provide `SDLManager` a URL for a logo to display on the Lock Screen. If you are creating your own lock screen, it is a best practice to utilize this feature. This notifcation comes through after we have downloaded the icon for you, and sent it in the `SDLDidReceiveLockScreenIcon` notification.
-
-**First**, register for the `SDLDidReceiveLockScreenIcon` Notification:
-
-#### Objective-C
-```objc
-[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(lockScreenIconReceived:) name:SDLDidReceiveLockScreenIcon object:nil];
-```
-
-#### Swift
-```swift
-NotificationCenter.default.addObserver(self, selector: #selector(lockScreenIconReceived(_:)), name: SDLDidReceiveLockScreenIcon, object: nil)
-```
-
-**Then**, act on the notification:
-
-#### Objective-C
-```objc
-- (void)lockScreenIconReceived:(NSNotification *)notification {
-    if (![notification.userInfo[SDLNotificationUserInfoObject] isKindOfClass:[UIImage class]]) {
-        return;
-    }
-
-    UIImage *icon = notification.userInfo[SDLNotificationUserInfoObject];
-}
-```
-
-#### Swift
-```swift
-func lockScreenIconReceived(_ notification: NSNotification) {
-	guard let image = notification.userInfo[SDLNotificationUserInfoObject] as? UIImage else {
-		return
-	}
-}
-```
+### Using the Vehicle's Icon
+If you want to build your own lock screen view controller, it is recommended that you subclass `SDLLockScreenViewController` and use the public `appIcon`, `vehicleIcon`, and `backgroundColor` properties.

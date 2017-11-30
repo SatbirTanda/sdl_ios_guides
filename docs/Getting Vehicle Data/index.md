@@ -44,21 +44,17 @@ Using `SDLGetVehicleData`, we can ask for vehicle data a single time, if needed.
 SDLGetVehicleData *getVehicleData = [[SDLGetVehicleData alloc] init];
 getVehicleData.prndl = @YES;
 [self.sdlManager sendRequest:getVehicleData withResponseHandler:^(__kindof SDLRPCRequest * _Nullable request, __kindof SDLRPCResponse * _Nullable response, NSError * _Nullable error) {
-    if (error) {
+    if (error || ![response isKindOfClass:SDLGetVehicleDataResponse.class]) {
         NSLog(@"Encountered Error sending GetVehicleData: %@", error);
-        return;
-    }
-    
-    if (![response isKindOfClass:SDLGetVehicleDataResponse.class]) {
         return;
     }
     
     SDLGetVehicleDataResponse* getVehicleDataResponse = (SDLGetVehicleDataResponse *)response;
     SDLResult *resultCode = getVehicleDataResponse.resultCode;
-    if (![resultCode isEqualToEnum:SDLResult.SUCCESS]) {
-        if ([resultCode isEqualToEnum:SDLResult.REJECTED]) {
+    if (![resultCode isEqualToEnum:SDLResultSuccess]) {
+        if ([resultCode isEqualToEnum:SDLResultRejected]) {
             NSLog(@"GetVehicleData was rejected. Are you in an appropriate HMI?");
-        } else if ([resultCode isEqualToEnum:SDLResult.DISALLOWED]) {
+        } else if ([resultCode isEqualToEnum:SDLResultDisallowed]) {
             NSLog(@"Your app is not allowed to use GetVehicleData");
         } else {
             NSLog(@"Some unknown error has occured!");
@@ -72,7 +68,7 @@ getVehicleData.prndl = @YES;
 
 #### Swift
 ```swift
-let getVehicleData = SDLGetVehicleData()!
+let getVehicleData = SDLGetVehicleData()
 getVehicleData.prndl = true
 sdlManager.send(getVehicleData) { (request, response, error) in
     guard let response = response as? SDLGetVehicleDataResponse,
@@ -85,10 +81,10 @@ sdlManager.send(getVehicleData) { (request, response, error) in
         return
     }
     
-    if !resultCode.isEqual(to: SDLResult.success()) {
-        if resultCode.isEqual(to: SDLResult.rejected()) {
+    if !resultCode.isEqual(to: .success) {
+        if resultCode.isEqual(to: .rejected) {
             print("GetVehicleData was rejected. Are you in an appropriate HMI?")
-        } else if resultCode.isEqual(to: SDLResult.disallowed()) {
+        } else if resultCode.isEqual(to: .disallowed) {
             print("Your app is not allowed to use GetVehicleData")
         } else {
             print("Some unknown error has occured!")
@@ -96,7 +92,7 @@ sdlManager.send(getVehicleData) { (request, response, error) in
         return
     }
     
-    let prndl = response.prndl
+    let prndl: SDLPRNDL = response.prndl
 }
 ```
 
@@ -115,7 +111,7 @@ Subscribing to vehicle data allows you to get notified whenever we have new data
 NotificationCenter.default.addObserver(self, selector: #selector(vehicleDataAvailable(_:)), name: .SDLDidReceiveVehicleData, object: nil)
 ```
 
-**Then**. Send the Subscribe Vehicle Data Request
+Then send the Subscribe Vehicle Data Request:
 
 #### Objective-C
 ```objc
@@ -127,19 +123,17 @@ subscribeVehicleData.prndl = @YES;
         return;
     }
     
-    
+    SDLSubscribeVehicleDataResponse *subscribeVehicleDataResponse = (SDLSubscribeVehicleDataResponse*)response;
+    SDLVehicleDataResult *prndlData = subscribeVehicleDataResponse.prndl;
     if (!response.success.boolValue) {
-        SDLSubscribeVehicleDataResponse *subscribeVehicleDataResponse = (SDLSubscribeVehicleDataResponse*)response;
-        SDLVehicleDataResult *prndlData = subscribeVehicleDataResponse.prndl;
-        
-        if ([response.resultCode isEqualToEnum:SDLResult.DISALLOWED]) {
+        if ([response.resultCode isEqualToEnum:SDLResultDisallowed]) {
             // Not allowed to register for this vehicle data.
-        } else if ([response.resultCode isEqualToEnum:SDLResult.USER_DISALLOWED]) {
+        } else if ([response.resultCode isEqualToEnum:SDLResultUserDisallowed]) {
             // User disabled the ability to give you this vehicle data
-        } else if ([response.resultCode isEqualToEnum:SDLResult.IGNORED]) {
-            if ([prndlData.resultCode isEqualToEnum:SDLVehicleDataResultCode.DATA_ALREADY_SUBSCRIBED]) {
+        } else if ([response.resultCode isEqualToEnum:SDLResultIgnored]) {
+            if ([prndlData.resultCode isEqualToEnum:SDLVehicleDataResultCodeDataAlreadySubscribed]) {
                 // You have access to this data item, and you are already subscribed to this item so we are ignoring.
-            } else if ([prndlData.resultCode isEqualToEnum:SDLVehicleDataResultCode.VEHICLE_DATA_NOT_AVAILABLE]) {
+            } else if ([prndlData.resultCode isEqualToEnum:SDLVehicleDataResultCodeVehicleDataNotAvailable]) {
                 // You have access to this data item, but the vehicle you are connected to does not provide it.
             } else {
             	NSLog(@"Unknown reason for being ignored: %@", prndlData.resultCode.value);
@@ -148,10 +142,6 @@ subscribeVehicleData.prndl = @YES;
             NSLog(@"Encountered Error sending SubscribeVehicleData: %@", error);
         }
         
-        return;
-    }
-    
-    if (![response isKindOfClass:SDLSubscribeVehicleDataResponse.class]) {
         return;
     }
     
@@ -168,15 +158,15 @@ sdlManager.send(subscribeVehicleData) { (request, response, error) in
     guard let response = response as? SDLSubscribeVehicleDataResponse else { return }
 
     guard response.success.boolValue == true else {
-        if response.resultCode.isEqual(to: SDLResult.disallowed()) {
+        if response.resultCode.isEqual(to: .disallowed) {
             // Not allowed to register for this vehicle data.
-        } else if response.resultCode.isEqual(to: SDLResult.user_DISALLOWED()) {
+        } else if response.resultCode.isEqual(to: .user_DISALLOWED) {
             // User disabled the ability to give you this vehicle data
-        } else if response.resultCode.isEqual(to: SDLResult.ignored()) {
+        } else if response.resultCode.isEqual(to: .ignored) {
             if let prndlData = response.prndl {
-                if prndlData.resultCode.isEqual(to: SDLVehicleDataResultCode.data_ALREADY_SUBSCRIBED()) {
+                if prndlData.resultCode.isEqual(to: .dataAlreadySubscribed) {
                     // You have access to this data item, and you are already subscribed to this item so we are ignoring.
-                } else if prndlData.resultCode.isEqual(to: SDLVehicleDataResultCode.vehicle_DATA_NOT_AVAILABLE()) {
+                } else if prndlData.resultCode.isEqual(to: .vehicleDataNotAvailable) {
                     // You have access to this data item, but the vehicle you are connected to does not provide it.
                 } else {
                     print("Unknown reason for being ignored: \(prndlData.resultCode.value)")
@@ -194,7 +184,7 @@ sdlManager.send(subscribeVehicleData) { (request, response, error) in
 }
 ```
 
-**Finally**, react to notification when Vehicle Data is received:
+Finally, react to the notification when Vehicle Data is received:
 
 #### Objective-C
 ``` objc
@@ -233,16 +223,16 @@ unsubscribeVehicleData.prndl = @YES;
         return;
     }
 
-    if (!response.success.boolValue) {
-        SDLUnsubscribeVehicleDataResponse *unsubscribeVehicleDataResponse = (SDLUnsubscribeVehicleDataResponse*)response;
-        SDLVehicleDataResult *prndlData = unsubscribeVehicleDataResponse.prndl;
+    SDLUnsubscribeVehicleDataResponse *unsubscribeVehicleDataResponse = (SDLUnsubscribeVehicleDataResponse*)response;
+    SDLVehicleDataResult *prndlData = unsubscribeVehicleDataResponse.prndl;
 
-        if ([response.resultCode isEqualToEnum:SDLResult.DISALLOWED]) {
+    if (!response.success.boolValue) {
+        if ([response.resultCode isEqualToEnum:SDLResultDisallowed]) {
             // Not allowed to register for this vehicle data, so unsubscribe also will not work.
-        } else if ([response.resultCode isEqualToEnum:SDLResult.USER_DISALLOWED]) {
+        } else if ([response.resultCode isEqualToEnum:SDLResultUserDisallowed]) {
             // User disabled the ability to give you this vehicle data, so unsubscribe also will not work.
-        } else if ([response.resultCode isEqualToEnum:SDLResult.IGNORED]) {
-            if ([prndlData.resultCode isEqualToEnum:SDLVehicleDataResultCode.DATA_NOT_SUBSCRIBED]) {
+        } else if ([response.resultCode isEqualToEnum:SDLResultIgnored]) {
+            if ([prndlData.resultCode isEqualToEnum:SDLVehicleDataResultCodeDataNotSubscribed]) {
                 // You have access to this data item, but it was never subscribed to so we ignored it.
             } else {
                 NSLog(@"Unknown reason for being ignored: %@", prndlData.resultCode.value);
@@ -266,22 +256,23 @@ sdlManager.send(unsubscribeVehicleData) { (request, response, error) in
     guard let response = response as? SDLUnsubscribeVehicleDataResponse else { return }
     
     guard response.success == true else {
-        if response.resultCode.isEqual(to: SDLResult.disallowed()) {
+        if response.resultCode.isEqual(to: .disallowed) {
             
-        } else if response.resultCode.isEqual(to: SDLResult.user_DISALLOWED()) {
+        } else if response.resultCode.isEqual(to: .userDisallowed) {
             
-        } else if response.resultCode.isEqual(to: SDLResult.ignored()) {
+        } else if response.resultCode.isEqual(to: .ignored) {
             if let prndlData = response.prndl {
-                if prndlData.resultCode.isEqual(to: SDLVehicleDataResultCode.data_ALREADY_SUBSCRIBED()) {
+                if prndlData.resultCode.isEqual(to: .dataAlreadySubscribed) {
                     // You have access to this data item, and you are already unsubscribed to this item so we are ignoring.
-                } else if prndlData.resultCode.isEqual(to: SDLVehicleDataResultCode.vehicle_DATA_NOT_AVAILABLE()) {
+                } else if prndlData.resultCode.isEqual(to: .vehicleDataNotAvailable) {
                     // You have access to this data item, but the vehicle you are connected to does not provide it.
                 } else {
                     print("Unknown reason for being ignored: \(prndlData.resultCode.value)")
                 }
             } else {
                 print("Unknown reason for being ignored: \(response.info)")
-            }                } else if let error = error {
+            }
+        } else if let error = error {
             print("Encountered Error sending UnsubscribeVehicleData: \(error)")
         }
         return

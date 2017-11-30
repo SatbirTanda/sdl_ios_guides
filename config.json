@@ -1,6 +1,6 @@
 {
     "Authors": [
-        "Alexander Muller", "Timur Pulathaneli", "Joel Fischer"
+        "Alexander Muller", "Timur Pulathaneli", "Joel Fischer", "Nicole Yarroch"
     ],
     "languages": [
         "en"
@@ -19,7 +19,10 @@
                   "name": "Integration Basics"
               },
               {
-                  "name": "Connecting to a SDL Core"
+                  "name": "Connecting to an Infotainment System"
+              },
+              {
+                  "name": "Adapting to the Head Unit Language"
               }
             ]
         },
@@ -53,7 +56,7 @@
             "name": "Getting Vehicle Data"
         },
         {
-            "name": "Getting In-Car Audio"
+            "name": "Getting In-Car Microphone Audio"
         },
         {
             "name": "Setting the Navigation Destination"
@@ -77,10 +80,13 @@
                   "name": "Touch Input"
               },
               {
+                  "name": "Supporting Haptic Input"
+              },
+              {
                   "name": "Keyboard Input"
               },
               {
-                  "name": "Displaying Turn By Turn Advices"
+                  "name": "Displaying Turn Directions"
               }
             ]
         },
@@ -88,12 +94,26 @@
             "name": "Developer Tools",
             "navigation" : [
                 {
-                    "name": "Relay"
+                  "name": "Configuring SDL Logging"
                 },
                 {
-                    "name": "RPC Builder"
+                  "name": "Relay"
+                },
+                {
+                  "name": "RPC Builder"
                 }
             ]
+        },
+        {
+          "name": "Migrating to Newer SDL iOS Versions",
+          "navigation": [
+            {
+              "name": "Updating to v4.3+"
+            },
+            {
+              "name": "Updating to v5.0+"
+            }
+          ]
         }
     ]
 }

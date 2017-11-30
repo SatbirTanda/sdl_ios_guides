@@ -4,40 +4,46 @@ Navigation applications have support for touch events, including both single and
 
 ### 1. Using `SDLTouchManager`
 
-`SDLTouchManager` has multiple callbacks that will ease the implementation of touch events. The following callbacks are provided:
+`SDLTouchManager` has multiple callbacks that will ease the implementation of touch events. 
 
-#### Swift
-```swift
-optional public func touchManager(_ manager: SDLTouchManager, didReceiveSingleTapAt point: CGPoint)
-optional public func touchManager(_ manager: SDLTouchManager, didReceiveDoubleTapAt point: CGPoint)
+!!! IMPORTANT
+The view passed from the following callbacks are dependent on using the built-in focusable item manager to send haptic rects. See [supporting haptic input](Mobile Navigation/Supporting Haptic Input) "Automatic Focusable Rects" for more information.
+!!!
 
-optional public func touchManager(_ manager: SDLTouchManager, panningDidStartAt point: CGPoint)
-optional public func touchManager(_ manager: SDLTouchManager, didReceivePanningFrom fromPoint: CGPoint, to toPoint: CGPoint)
-optional public func touchManager(_ manager: SDLTouchManager, panningDidEndAt point: CGPoint)
-
-optional public func touchManager(_ manager: SDLTouchManager, pinchDidStartAtCenter point: CGPoint)
-optional public func touchManager(_ manager: SDLTouchManager, didReceivePinchAtCenter point: CGPoint, withScale scale: CGFloat)
-optional public func touchManager(_ manager: SDLTouchManager, pinchDidEndAtCenter point: CGPoint)
-```
+The following callbacks are provided:
 
 #### Objective-C
 ```objc
-- (void)touchManager:(SDLTouchManager*)manager didReceiveSingleTapAtPoint:(CGPoint)point;
-- (void)touchManager:(SDLTouchManager*)manager didReceiveDoubleTapAtPoint:(CGPoint)point;
+- (void)touchManager:(SDLTouchManager *)manager didReceiveSingleTapForView:(nullable UIView *)view atPoint:(CGPoint)point;
+- (void)touchManager:(SDLTouchManager *)manager didReceiveDoubleTapForView:(nullable UIView *)view atPoint:(CGPoint)point;
+- (void)touchManager:(SDLTouchManager *)manager panningDidStartInView:(nullable UIView *)view atPoint:(CGPoint)point;
+- (void)touchManager:(SDLTouchManager *)manager didReceivePanningFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint;
+- (void)touchManager:(SDLTouchManager *)manager panningDidEndInView:(nullable UIView *)view atPoint:(CGPoint)point;
+- (void)touchManager:(SDLTouchManager *)manager panningCanceledAtPoint:(CGPoint)point;
+- (void)touchManager:(SDLTouchManager *)manager pinchDidStartInView:(nullable UIView *)view atCenterPoint:(CGPoint)point;
+- (void)touchManager:(SDLTouchManager *)manager didReceivePinchAtCenterPoint:(CGPoint)point withScale:(CGFloat)scale;
+- (void)touchManager:(SDLTouchManager *)manager didReceivePinchInView:(nullable UIView *)view atCenterPoint:(CGPoint)point withScale:(CGFloat)scale;
+- (void)touchManager:(SDLTouchManager *)manager pinchDidEndInView:(nullable UIView *)view atCenterPoint:(CGPoint)point;
+- (void)touchManager:(SDLTouchManager *)manager pinchCanceledAtCenterPoint:(CGPoint)point;
+```
 
-- (void)touchManager:(SDLTouchManager *)manager panningDidStartAtPoint:(CGPoint)point;
-- (void)touchManager:(SDLTouchManager*)manager didReceivePanningFromPoint:(CGPoint)fromPoint
-                                                                  toPoint:(CGPoint)toPoint;
-- (void)touchManager:(SDLTouchManager*)manager panningDidEndAtPoint:(CGPoint)point;
-
-- (void)touchManager:(SDLTouchManager *)manager pinchDidStartAtCenterPoint:(CGPoint)point;
-- (void)touchManager:(SDLTouchManager*)manager didReceivePinchAtCenterPoint:(CGPoint)point
-                                                                  withScale:(CGFloat)scale;
-- (void)touchManager:(SDLTouchManager *)manager pinchDidEndAtCenterPoint:(CGPoint)point;
+#### Swift
+```swift
+    optional public func touchManager(_ manager: SDLTouchManager!, didReceiveSingleTapForView view: UIView?, atPoint point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager!, didReceiveDoubleTapForView view: UIView?, atPoint point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager!, panningDidStartInView view: UIView?, atPoint point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager!, didReceivePanningFromPoint fromPoint: Any!, toPoint: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager!, panningDidEndInView view: UIView?, atPoint point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager!, panningCanceledAtPoint point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager!, pinchDidStartInView view: UIView?, atCenterPoint point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager!, didReceivePinchAtCenterPoint point: CGPoint, withScale scale: CGFloat)
+    optional public func touchManager(_ manager: SDLTouchManager!, didReceivePinchInView view: UIView?, atCenterPoint point: CGPoint, withScale scale: CGFloat)
+    optional public func touchManager(_ manager: SDLTouchManager!, pinchDidEndInView view: UIView?, atCenterPoint point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager!, pinchCanceledAtCenterPoint point: CGPoint)
 ```
 
 !!! note
-Points that are provided via these callbacks are in the head unit's coordinate space.
+Points that are provided via these callbacks are in the head unit's coordinate space. This is likely to correspond to your own streaming coordinate space. You can retrieve the head unit dimensions from `SDLStreamingMediaManager.screenSize`.
 !!!
 
 ### 2. Self Implementation of `onTouchEvent`
@@ -47,26 +53,45 @@ If apps want to have access to the raw touch data, the `SDLDidReceiveTouchEventN
 #### Type
 
 BEGIN
-: Sent for the first touch event
+: Sent for the first touch event.
 
 MOVE
-: Sent if the touch moved
+: Sent if the touch moved.
 
 END
-: Sent when the touch is lifted
+: Sent when the touch is lifted.
+
+CANCEL
+: Sent when the touch is canceled (for example, if a dialog appeared over the touchable screen while the touch was in progress).
 
 #### Event
 
 touchEventId
-: Unique ID of the touch. Increases for multiple touches (0, 1, 2, ...)
+: Unique ID of the touch. Increases for multiple touches (0, 1, 2, ...).
 
 timeStamp
-: Timestamp of the head unit time. Can be used to compare time passed between touches
+: Timestamp of the head unit time. Can be used to compare time passed between touches.
 
 coord
-: X and Y coordinates in the head unit coordinate system. (0, 0) is the top left
+: X and Y coordinates in the head unit coordinate system. (0, 0) is the top left.
 
 #### Example
+
+#### Objective-C
+```objc
+[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(touchEventAvailable:) name:SDLDidReceiveTouchEventNotification object:nil];
+
+- (void)touchEventAvailable:(SDLRPCNotificationNotification *)notification {
+    if (![notification.notification isKindOfClass:SDLOnTouchEvent.class]) {
+      return;
+    }
+    SDLOnTouchEvent *touchEvent = (SDLOnTouchEvent *)notification.notification;
+
+    // Grab something like type
+    SDLTouchType* type = touchEvent.type;
+}
+
+```
 
 #### Swift
 ```swift
@@ -83,20 +108,4 @@ NotificationCenter.default.addObserver(self, selector: #selector(touchEventAvail
     // Grab something like type
     let type = touchEvent.type
 }
-```
-
-#### Objective-C
-```objc
-[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(touchEventAvailable:) name:SDLDidReceiveTouchEventNotification object:nil];
-
-- (void)touchEventAvailable:(SDLRPCNotificationNotification *)notification {
-    if (![notification.notification isKindOfClass:SDLOnTouchEvent.class]) {
-      return;
-    }
-    SDLOnTouchEvent* touchEvent = (SDLOnTouchEvent *)notification.notification;
-
-    // Grab something like type
-    SDLTouchType* type = touchEvent.type;
-}
-
 ```

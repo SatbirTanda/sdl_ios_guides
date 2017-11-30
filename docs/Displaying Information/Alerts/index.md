@@ -1,5 +1,4 @@
 ## Alerts
-
 An alert is a pop-up window with some lines of text and optional soft buttons. When an alert is activated, it will abort any SDL operation that is in-progress, except the already-in-progress alert. If an alert is issued while another alert is still in progress, the newest alert will simply be ignored.
 
 ### Dismissing the Alert
@@ -7,9 +6,11 @@ The alert will persist on the screen until the timeout has elapsed, or the user 
 
 ### Alert UI
 Depending the platform, an alert can have up to three lines of text, a progress indicator (e.g. a spinning wheel or hourglass), and up to four soft buttons.
+
 #### Alert without soft buttons
 ##### Ford HMI
 ![Ford Alert without Soft Buttons](assets/Ford_AlertWithNoSoftButtons.png)
+
 #### Alert with soft buttons
 ##### Ford HMI
 ![Ford Alert with Soft Buttons](assets/Ford_AlertWithSoftButtons.png)
@@ -40,21 +41,21 @@ alert.playTone = @YES;
 // Soft buttons
 SDLSoftButton *okButton = [[SDLSoftButton alloc] init];
 okButton.text = @"OK";
-okButton.type = SDLSoftButtonType.TEXT;
+okButton.type = SDLSoftButtonTypeText;
 okButton.softButtonID = @<#Soft Button Id#>;
-okButton.handler = ^(SDLRPCNotification *notification) {
-    if (![notification isKindOfClass:SDLOnButtonPress.class]) {
+okButton.handler = ^(SDLOnButtonPress *_Nullable buttonPress,  SDLOnButtonEvent *_Nullable buttonEvent) {
+    if (buttonPress == nil) {
       return;
     }
-    SDLOnButtonPress *onButtonPress = (SDLOnButtonPress*)notification;
-    NSNumber *buttonId = onButtonPress.customButtonID;
+
     // create a custom action for the selected button
 };
-alert.softButtons = [NSMutableArray arrayWithObject:okButton];
+
+alert.softButtons = @[okButton];
 
 // Send the alert
 [self.sdlManager sendRequest:alert withResponseHandler:^(SDLRPCRequest *request, SDLRPCResponse *response, NSError *error) {
-    if ([response.resultCode isEqualToEnum:SDLResult.SUCCESS]) {
+    if ([response.resultCode isEqualToEnum:SDLResultSuccess]) {
       // alert was dismissed successfully
     }
 }];
@@ -80,20 +81,21 @@ alert.ttsChunks = SDLTTSChunk.textChunks(from: "<#Text to speak#>")
 alert.playTone = true
 
 // Soft buttons
-let okButton = SDLSoftButton()!
+let okButton = SDLSoftButton()
 okButton.text = "OK"
 okButton.type = .text()
 okButton.softButtonID = <#Soft Button Id#>
-okButton.handler = { (notification) in
-    guard let notification = notification as? SDLOnButtonPress else { return }
-    guard let id = notification.customButtonID else { return }
+okButton.handler = { (buttonPress, buttonEvent) in
+    guard let press = buttonPress else { return }
+
     // create a custom action for the selected button
 }
+
 alert.softButtons = [okButton]
 
 // Send the alert
 sdlManager.send(alert) { (request, response, error) in
-    if response?.resultCode == .success() {
+    if response?.resultCode == .success {
         // alert was dismissed successfully
     }
 }
