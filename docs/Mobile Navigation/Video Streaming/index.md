@@ -10,7 +10,26 @@ The lifecycle of the video stream is maintained by the SDL library. The `SDLMana
 It is not recommended to alter the default video format and resolution behavior but that option is available to you using `SDLStreamingMediaConfiguration.dataSource`.
 !!!
 
-### Sending Data to the Stream
+### CarWindow
+CarWindow is a system for automatically video streaming a view controller's frame to the head unit. It will automatically set the view controller passed to the correct frame and start sending the data when the video service has completed setup. This adds a few new `SDLStreamingMediaConfiguration` parameters. To start, you will have to set a `rootViewController`. You can also choose whether or not to have CarWindow wait until the screen updates to run using `carWindowDrawsAfterScreenUpdates`. That is all that must be done.
+
+Note that CarWindow will hard-dictate the frames per second. To change it and other parameters, update `SDLStreamingMediaConfiguration.customVideoEncoderSettings`.
+
+These are the current defaults:
+```objc
+@{
+    (__bridge NSString *)kVTCompressionPropertyKey_ProfileLevel: (__bridge NSString *)kVTProfileLevel_H264_Baseline_AutoLevel,
+    (__bridge NSString *)kVTCompressionPropertyKey_RealTime: @YES,
+    (__bridge NSString *)kVTCompressionPropertyKey_ExpectedFrameRate: @15,
+    (__bridge NSString *)kVTCompressionPropertyKey_AverageBitRate: @600000,
+    (__bridge NSString *)kVTCompressionPropertyKey_DataRateLimits: @[@425000, @5]
+};
+```
+
+#### Replacing the view controller
+Simply update `self.sdlManager.streamManager.carWindow.rootViewController` to the new view controller.
+
+### Manually Sending Data to the Stream
 To check whether or not you are ready to start sending data to the video stream, watch for the `SDLVideoStreamDidStartNotification` and `SDLVideoStreamDidStopNotification` notifications. When you receive the start notification, start sending data; stop when you receive the stop notification. There are parallel notifications for audio streaming.
 
 Sending video data to the head unit must be provided to `SDLStreamingMediaManager` as a `CVImageBufferRef` (Apple documentation [here](https://developer.apple.com/library/mac/documentation/QuartzCore/Reference/CVImageBufferRef/)). Once the video stream has started, you will not see video appear until a few frames have been received. To send a frame, refer to the snippet below:
