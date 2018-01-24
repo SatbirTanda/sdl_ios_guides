@@ -28,20 +28,18 @@ These are the current defaults:
 ```
 
 #### Replacing the view controller
-Simply update `self.sdlManager.streamManager.carWindow.rootViewController` to the new view controller.
+Simply update `self.sdlManager.streamManager.rootViewController` to the new view controller. This will also update the haptic parser.
 
 #### App UI vs. Off-Screen UI
-It is generally recommended to pass non-onscreen view controller to display via CarWindow, that is, to instantiate a new view controller and pass it. This will then appear on-screen. It is also possible to display your app UI on the screen, that is, to pass `UIApplication.sharedApplication.keyWindow.rootViewController`. However, if you use the app UI, the app's UI will have to resize to accomidate the head unit's screen size.
+It is generally recommended to pass a non-on-device-screen view controller to display via CarWindow, that is, to instantiate a new view controller and pass it. This will then appear on-screen in the car, while remaining off-screen on the device. It is also possible to display your on-device-screen UI to the car screen by passing `UIApplication.sharedApplication.keyWindow.rootViewController`. However, if you use the app UI, the app's UI will have to resize to accomidate the head unit's screen size.
 
 !!! NOTE
-If the `rootViewController` is app UI and is set from the `UIViewController` class, it should only be set after viewDidAppear:animated is called. Setting the `rootViewController` in `viewDidLoad` or `viewWillAppear:animated` can cause weird behavior when setting the new frame.
+If the `rootViewController` is app UI and is set from the `UIViewController` class, it should only be set after `viewDidAppear:animated` is called. Setting the `rootViewController` in `viewDidLoad` or `viewWillAppear:animated` can cause weird behavior when setting the new frame.
 !!!
 
 !!! NOTE
 If setting the `rootViewController` when the app returns to the foreground, the app should register for the `UIApplicationDidBecomeActive` notification and not the `UIApplicationWillEnterForeground` notification. Setting the frame after a notification from the latter can also cause weird behavior when setting the new frame.
 !!!
-
-If you wish to alter this `rootViewController` while streaming via CarWindow, you must set a new `rootViewController` on `SDLStreamingMediaManager` and this will update both the haptic view parser and CarWindow.
 
 ### Manually Sending Data to the Stream
 To check whether or not you are ready to start sending data to the video stream, watch for the `SDLVideoStreamDidStartNotification` and `SDLVideoStreamDidStopNotification` notifications. When you receive the start notification, start sending data; stop when you receive the stop notification. There are parallel notifications for audio streaming.
