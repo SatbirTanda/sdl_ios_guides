@@ -11,7 +11,9 @@ It is not recommended to alter the default video format and resolution behavior 
 !!!
 
 ### CarWindow
-CarWindow is a system for automatically video streaming a view controller's frame to the head unit. It will automatically set the view controller passed to the correct frame and start sending the data when the video service has completed setup. This adds a few new `SDLStreamingMediaConfiguration` parameters. To start, you will have to set a `rootViewController`. You can also choose whether or not to have CarWindow wait until the screen updates to run using `carWindowDrawsAfterScreenUpdates`. That is all that must be done.
+CarWindow is a system for automatically video streaming a view controller's frame to the head unit. It will automatically set the view controller passed to the correct frame and start sending the data when the video service has completed setup. There are a few important `SDLStreamingMediaConfiguration` parameters. To start, you will have to set a `rootViewController`, and there are initializers to help in doing so. You can also choose how CarWindow captures and renders the screen using the `carWindowRenderingType` enum. You can use the initializers `+ (instancetype)autostreamingInsecureConfigurationWithInitialViewController:(UIViewController *)initialViewController;` and `+ (instancetype)autostreamingSecureConfigurationWithSecurityManagers:(NSArray<Class<SDLSecurityType>> *)securityManagers initialViewController:(UIViewController *)initialViewController;`.
+
+By default, when using `SDLCarWindow`, the `SDLTouchManager` will sync it's touch updates to the framerate. To disable this, set `SDLTouchManager.enableSyncedPanning` to `NO`.
 
 Note that CarWindow will hard-dictate the framerate of the app. To change it and other parameters, update `SDLStreamingMediaConfiguration.customVideoEncoderSettings`.
 
