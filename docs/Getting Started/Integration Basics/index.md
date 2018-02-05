@@ -107,7 +107,7 @@ At the top of the *ProxyManager* class, import the SDL for iOS library.
 
 #### Swift
 ```swift
-import SmartDeviceLink
+import SmartDeviceLink_iOS
 ```
 
 ### Create the SDL Manager
@@ -181,7 +181,7 @@ SDLLifecycleConfiguration* lifecycleConfiguration = [SDLLifecycleConfiguration d
 
 #### Swift
 ```swift
-let lifecycleConfiguration = SDLLifecycleConfiguration.defaultConfiguration(withAppName:"<#App Name#>", appId: "<#App Id#>")
+let lifecycleConfiguration = SDLLifecycleConfiguration(appName:"<#App Name#>", appId: "<#App Id#>")
 ```
 
 #### TCP
@@ -192,7 +192,7 @@ SDLLifecycleConfiguration* lifecycleConfiguration = [SDLLifecycleConfiguration d
 
 #### Swift
 ```swift
-let lifecycleConfiguration = SDLLifecycleConfiguration.debugConfiguration(withAppName: "<#App Name#>", appId: "<#App Id#>", ipAddress: "<#IP Address#>", port: <#Port#>))
+let lifecycleConfiguration = SDLLifecycleConfiguration(appName: "<#App Name#>", appId: "<#App Id#>", ipAddress: "<#IP Address#>", port: <#Port#>))
 ```  
 
 !!! NOTE
@@ -231,8 +231,8 @@ if (appImage) {
 
 #### Swift
 ```swift
-if let appImage = UIImage(named: "<#AppIcon Name#>") else {
-  let appIcon = SDLArtwork.persistentArtwork(with: appImage, name: "<#Name to Upload As#>", as: .JPG /* or .PNG */)
+if let appImage = UIImage(named: "<#AppIcon Name#>") {
+  let appIcon = SDLArtwork(with: appImage, name: "<#Name to Upload As#>", persistent: true, as: .JPG /* or .PNG */)
   lifecycleConfiguration.appIcon = appIcon  
 }
 ```
@@ -447,39 +447,37 @@ class ProxyManager: NSObject {
     private let appId = "<#App Id#>"
     
     // Manager
-    fileprivate let sdlManager: SDLManager
+    fileprivate let sdlManager: SDLManager?
     
     // Singleton
     static let sharedManager = ProxyManager()
     
     private override init() {
+        super.init()
+
         // Used for USB Connection
-        let lifecycleConfiguration = SDLLifecycleConfiguration.defaultConfiguration(withAppName: appName, appId: appId)
+        let lifecycleConfiguration = SDLLifecycleConfiguration(appName: appName, appId: appId)
         
         // Used for TCP/IP Connection
-//        let lifecycleConfiguration = SDLLifecycleConfiguration.debugConfiguration(withAppName: appName, appId: appId, ipAddress: "<#IP Address#>", port: <#Port#>)
+        // let lifecycleConfiguration = SDLLifecycleConfiguration(appName: appName, appId: appId, ipAddress: "<#IP Address#>", port: <#Port#>)
         
         // App icon image
         if let appImage = UIImage(named: "<#AppIcon Name#>") {
-            let appIcon = SDLArtwork.persistentArtwork(with: appImage, name: "<#Name to Upload As#>", as: .JPG /* or .PNG */)
+            let appIcon = SDLArtwork(image: appImage, name: "<#Name to Upload As#>", persistent: true, as: .JPG /* or .PNG */)
             lifecycleConfiguration.appIcon = appIcon
         }
         
         lifecycleConfiguration.shortAppName = "<#Shortened App Name#>"
-        lifecycleConfiguration.appType = .media()
+        lifecycleConfiguration.appType = .media
         
         let configuration = SDLConfiguration(lifecycle: lifecycleConfiguration, lockScreen: .enabled(), logging: .default())
         
-        sdlManager = SDLManager(configuration: configuration, delegate: nil)
-        
-        super.init()
-        
-        sdlManager.delegate = self
+        sdlManager = SDLManager(configuration: configuration, delegate: self)                
     }
     
     func connect() {
         // Start watching for a connection with a SDL Core
-        sdlManager.start { (success, error) in
+        sdlManager?.start { (success, error) in
             if success {
                 // Your app has successfully connected with the SDL Core
             }
@@ -493,7 +491,7 @@ extension ProxyManager: SDLManagerDelegate {
     print("Manager disconnected!")
   }
 
-  func hmiLevel(_ oldLevel: SDLHMILevel, didChangeTo newLevel: SDLHMILevel) {
+  func hmiLevel(_ oldLevel: SDLHMILevel, didChangeToLevel newLevel: SDLHMILevel) {
     print("Went from HMI level \(oldLevel) to HMI level \(newLevel)")
   }
 }

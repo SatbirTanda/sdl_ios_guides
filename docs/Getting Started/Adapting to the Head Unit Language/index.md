@@ -37,8 +37,8 @@ SDLChangeRegistration *change = [[SDLChangeRegistration alloc] initWithLanguage:
 ```swift
 let change = SDLChangeRegistration(language:<#Matching language#>, hmiDisplayLanguage:<#Matching language#>, appName:"<#App name for new language#>" ttsName:[<#App TTS name for language#>], ngnMediaScreenAppName:nil, vrSynonyms:nil)
 
-self.sdlManager.send(change) { (request, response, error) in
-	if response?.resultCode != .success() {
+self.sdlManager.send(request: change) { (request, response, error) in
+	if response?.resultCode != .success {
 		// The change registration failed
 		return
 	}
