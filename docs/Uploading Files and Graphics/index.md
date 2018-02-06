@@ -34,14 +34,14 @@ __weak typeof (self) weakSelf = self;
 
 #### Swift
 ```swift
-sdlManager.start { (success, error) in
-    if success == false {
-        print("SDL errored starting up: \(error)")
+sdlManager.start { [weak self] (success, error) in
+    if !success {
+        print("SDL errored starting up: \(error.debugDescription)")
         return
     }
     
     var areGraphicsSupported = false
-    if let displayCapabilities = self.sdlManager.registerResponse?.displayCapabilities {
+    if let displayCapabilities = self?.sdlManager.registerResponse?.displayCapabilities {
         areGraphicsSupported = displayCapabilities.graphicSupported.boolValue
     }
 }
@@ -80,16 +80,16 @@ guard let image = UIImage(named: "<#Image Name#>") else {
 	print("Error reading from Assets")
 	return
 }
-let file = SDLArtwork.artwork(with: image, name: "<#Name to Upload As#>", as: .JPG /* or .PNG */)
+let file = SDLArtwork(image: image, name: "<#Name to Upload As#>", persistent: true, as: .JPG /* or .PNG */)
 
 sdlManager.fileManager.upload(file: file) { (success, bytesAvailable, error) in
-    if let error = error as? NSError {
-        if error.code == SDLFileManagerError.cannotOverwrite.rawValue {
+    if let error = error {
+        if error._code == SDLFileManagerError.errorCannotOverwrite.rawValue {
             // Attempting to upload a file with a name that already exists on the head unit, if you want to overwrite the existing file, you need to set the `overwrite` flag on `SDLArtwork`.
         } else {
             // Error uploading
         }
-        return;
+        return
     }
     
     // Successfully uploaded
@@ -126,7 +126,7 @@ guard let image = UIImage(named: "<#Image Name#>") else {
     print("Error reading from Assets")
     return
 }
-let file = SDLArtwork.artwork(with: image, name: "<#Name to Upload As#>", as: .JPG /* or .PNG */)
+let file = SDLArtwork(image: image, name: "<#Name to Upload As#>", persistent: true, as: .JPG /* or .PNG */)
 
 sdlManager.fileManager.upload(files: [file], progressHandler: { (fileName, uploadPercentage, error) -> Bool in
     // Optional handler, there's another method without this callback
@@ -141,16 +141,20 @@ sdlManager.fileManager.upload(files: [file], progressHandler: { (fileName, uploa
 ```
 
 ### File Persistance
-`SDLFile`, and its subclass `SDLArtwork` support uploading persistant files, i.e. images that do not become deleted when the car turns off. Persistance should be used for images relating to your UI, such as soft button images, and not for dynamic aspects, such as Album Artwork.
+`SDLFile`, and its subclass `SDLArtwork` support uploading persistant files, i.e. images that do not become deleted when the car turns off. Persistance should be used for images relating to your UI, such as soft button images, and not for dynamic aspects, such as Album Artwork.  Objects of type `SDLFile`, and its subclass `SDLArtwork` should be initialized as persistent files if need be.  You can check the persistence via:  
 
 #### Objective-C
 ```objc
-file.persistent = YES;
+if(file.isPersistent) {
+    // File was initialized as persistent
+}
 ```
 
 #### Swift
 ```swift
-file.persistent = true
+if file.isPersistent {
+    // File was initialized as persistent
+}
 ```
 
 !!! NOTE
@@ -193,7 +197,13 @@ BOOL isFileOnHeadUnit = [self.sdlManager.fileManager.remoteFileNames containsObj
 
 #### Swift
 ```swift
-let isFileOnHeadUnit = sdlManager.fileManager.remoteFileNames.contains("<#Name Uploaded As#>")
+if let fileIsOnHeadUnit = sdlManager.fileManager.remoteFileNames.contains("<#Name Uploaded As#>") {
+    if fileIsOnHeadUnit {
+        // File exists
+    } else {
+        // File does not exist
+    }
+}
 ```
 
 ### Delete Stored Files
