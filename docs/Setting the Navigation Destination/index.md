@@ -39,13 +39,13 @@ __weak typeof (self) weakSelf = self;
 #### Swift
 ```swift
 var isNavigationSupported = false
-if let hmiCapabilities = self.sdlManager.registerResponse?.hmiCapabilities {
-    isNavigationSupported = hmiCapabilities.navigation.boolValue
+if let hmiCapabilities = self.sdlManager.registerResponse?.hmiCapabilities, let navigationSupported = hmiCapabilities.navigation?.boolValue {
+    isNavigationSupported = navigationSupported
 }
 
 sdlManager.start { (success, error) in
-    if success == false {
-        print("SDL errored starting up: \(error)")
+    if !success {
+        print("SDL errored starting up: \(error.debugDescription)")
         return
     }
 }
@@ -83,21 +83,19 @@ SDLSendLocation *sendLocation = [[SDLSendLocation alloc] initWithLongitude:-97.3
 #### Swift
 ```swift
 let sendLocation = SDLSendLocation(longitude: -97.380967, latitude: 42.877737, locationName: "The Center", locationDescription: "Center of the United States", address: ["900 Whiting Dr", "Yankton, SD 57078"], phoneNumber: nil, image: nil)
-sdlManager.send(sendLocation) { (request, response, error) in
-    guard let response = response as? SDLSendLocationResponse,
-        let resultCode = response.resultCode else {
-            return
-    }
+
+sdlManager.send(request: sendLocation) { (request, response, error) in
+    guard let response = response as? SDLSendLocationResponse else { return }
     
     if let error = error {
         print("Encountered Error sending SendLocation: \(error)")
         return
     }
     
-    if !resultCode.isEqual(to: .success) {
-        if resultCode.isEqual(to: .invalidData) {
+    if response.resultCode != .success {
+        if response.resultCode == .invalidData {
             print("SendLocation was rejected. The request contained invalid data.")
-        } else if resultCode.isEqual(to: .disallowed) {
+        } else if response.resultCode == .disallowed {
             print("Your app is not allowed to use SendLocation")
         } else {
             print("Some unknown error has occured!")
