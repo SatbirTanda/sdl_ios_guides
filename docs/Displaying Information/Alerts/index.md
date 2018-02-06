@@ -63,7 +63,7 @@ alert.softButtons = @[okButton];
 
 #### Swift
 ```swift
-let alert = SDLAlert(alertText1: "<#Line 1#>", alertText2: "<#Line 2#>", alertText3: "<#Line 3#>")!
+let alert = SDLAlert(alertText1: "<#Line 1#>", alertText2: "<#Line 2#>", alertText3: "<#Line 3#>")
 
 // Maximum time alert appears before being dismissed
 // Timeouts are must be between 3-10 seconds
@@ -83,7 +83,7 @@ alert.playTone = true
 // Soft buttons
 let okButton = SDLSoftButton()
 okButton.text = "OK"
-okButton.type = .text()
+okButton.type = .text
 okButton.softButtonID = <#Soft Button Id#>
 okButton.handler = { (buttonPress, buttonEvent) in
     guard let press = buttonPress else { return }
@@ -94,7 +94,7 @@ okButton.handler = { (buttonPress, buttonEvent) in
 alert.softButtons = [okButton]
 
 // Send the alert
-sdlManager.send(alert) { (request, response, error) in
+sdlManager.send(request: alert) { (request, response, error) in
     if response?.resultCode == .success {
         // alert was dismissed successfully
     }

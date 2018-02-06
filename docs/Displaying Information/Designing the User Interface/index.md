@@ -44,8 +44,8 @@ SDLSetDisplayLayout* display = [[SDLSetDisplayLayout alloc] initWithPredefinedLa
 #### Swift
 ```swift
 let display = SDLSetDisplayLayout(predefinedLayout: .graphicWithText)
-sdlManager.send(display) { (request, response, error) in
-    if response?.resultCode == .success() {
+sdlManager.send(request: display) { (request, response, error) in
+    if response?.resultCode == .success {
         // The template has been set successfully
     }
 }

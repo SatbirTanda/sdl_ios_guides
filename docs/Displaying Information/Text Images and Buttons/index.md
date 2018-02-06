@@ -19,9 +19,9 @@ self.sdlManager sendRequest:show withResponseHandler:^(SDLRPCRequest *request, S
 #### Swift
 ```swift
 let show = SDLShow(mainField1: "<#Line 1 of Text#>", mainField2: "<#Line 2 of Text#>", mainField3: "<#Line 3 of Text#>", mainField4: "<#Line 4 of Text#>", alignment: .centered)
-sdlManager.send(show) { (request, response, error) in
+sdlManager.send(request: show) { (request, response, error) in
     guard let response = response else { return }
-    if response.resultCode.isEqual(to: .success) {
+    if response.resultCode == .success {
         // The text has been set successfully
     }
 }
@@ -53,14 +53,14 @@ self.sdlManager sendRequest:show withResponseHandler:^(SDLRPCRequest *request, S
 
 #### Swift
 ```swift
-let sdlImage = SDLImage(name: "<#Uploaded As Name", of: .dynamic())
+let sdlImage = SDLImage(name: "<#Uploaded As Name", ofType: .dynamic)
 
 let show = SDLShow()
 show.graphic = image
 
-sdlManager.send(show) { (request, response, error) in
+sdlManager.send(request: show) { (request, response, error) in
     guard let response = response else { return }
-    if response.resultCode.isEqual(to: .success) {
+    if response.resultCode == .success {
       // Success
     }
 }
@@ -138,9 +138,9 @@ softButton.handler = { (press, event) in
             // Long button press
         }
     } else if let buttonEvent = event {
-        if onButtonEvent.buttonEventMode == .buttonUp {
+        if buttonEvent.buttonEventMode == .buttonUp {
             // Button up
-        } else if onButtonEvent.buttonEventMode == .buttonDown {
+        } else if buttonEvent.buttonEventMode == .buttonDown {
             // Button down
         }
     }
@@ -153,7 +153,7 @@ softButton.type = .both
 softButton.text = "<#Button Text#>"
 
 // Button image
-softButton.image = SDLImage(name: "<#Save As Name#>", of: .dynamic)
+softButton.image = SDLImage(name: "<#Save As Name#>", ofType: .dynamic)
 
 let show = SDLShow()
 
@@ -161,12 +161,17 @@ let show = SDLShow()
 show.softButtons = [softButton]
 
 // Send the request
-sdlManager.send(show) { (request, response, error) in
+sdlManager.send(request: show) { (request, response, error) in
     guard let response = response else { return }
-    if response.resultCode.isEqual(to: .success) {
+    if response.resultCode == .success {
         // The button was created successfully
     }
 }
+
+// OR
+
+// Convenience Init
+let softButton = SDLSoftButton(type: <#T##SDLSoftButtonType#>, text: <#T##String?#>, image: <#T##SDLImage?#>, highlighted: <#T##Bool#>, buttonId: <#T##UInt16#>, systemAction: <#T##SDLSystemAction?#>, handler: <#T##SDLRPCButtonNotificationHandler?##SDLRPCButtonNotificationHandler?##(SDLOnButtonPress?, SDLOnButtonEvent?) -> Void#>)
 ```
 
 #### Subscribe Buttons

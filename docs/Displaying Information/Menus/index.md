@@ -52,12 +52,12 @@ let menuItem = SDLAddCommand(id: <#Unique Id#>, vrCommands: ["<#Voice Recognitio
   if command.triggerSource == .menu {
     // Menu Item Was Selected
   }
-}!
+}
 
 // Set the menu parameters
 menuItem.menuParams = menuParameters
 
-sdlManager.send(menuItem) { (request, response, error) in
+sdlManager.send(request: menuItem) { (request, response, error) in
   if response?.resultCode == .success {
       // The menuItem was created successfully
   }
@@ -82,11 +82,11 @@ SDLAddSubMenu* subMenu = [[SDLAddSubMenu alloc] initWithId:<#Unique Id#> menuNam
 ```swift
 let subMenu = SDLAddSubMenu(id: <#Unique Id#>, menuName: "<#SubMenu Item Name#>")!
 
-sdlManager.send(subMenu) { (request, response, error) in
+sdlManager.send(request: subMenu) { (request, response, error) in
     if response?.resultCode == .success {
         // The submenu was created successfully, start adding the submenu items
     }
-})
+}
 ```
 
 #### Delete Menu Items
@@ -105,9 +105,9 @@ SDLDeleteCommand *deleteMenuItem = [[SDLDeleteCommand alloc] initWithId:<#Id of 
 
 #### Swift
 ```swift
-let deleteMenuItem = SDLDeleteCommand(id: <#Id of Menu Item To Delete#>)!
+let deleteMenuItem = SDLDeleteCommand(id: <#Id of Menu Item To Delete#>)
 
-sdlManager.send(deleteMenuItem) { (request, response, error) in
+sdlManager.send(request: deleteMenuItem) { (request, response, error) in
     if response?.resultCode == .success {
         // The menu item was successfully deleted
     }
@@ -130,9 +130,9 @@ SDLDeleteSubMenu *deleteSubMenu = [[SDLDeleteSubMenu alloc] initWithId:<#Id of S
 
 #### Swift
 ```swift
-let deleteSubMenu = SDLDeleteSubMenu(id: <#Id of Sub Menu Item to Delete#>)!
+let deleteSubMenu = SDLDeleteSubMenu(id: <#Id of Sub Menu Item to Delete#>)
 
-sdlManager.send(deleteSubMenu) { (request, response, error) in
+sdlManager.send(request: deleteSubMenu) { (request, response, error) in
     if response?.resultCode == .success {
         // The sub menu was successfully deleted
     }
@@ -167,7 +167,7 @@ let choice = SDLChoice(id: <#Unique Id#>, menuName: "<#Menu Title#>", vrCommands
 
 let createRequest = SDLCreateInteractionChoiceSet(id: <#Unique Id#>, choiceSet: [choice])
 
-sdlManager.send(createRequest) { (request, response, error) in
+sdlManager.send(request: createRequest) { (request, response, error) in
     if response?.resultCode == .success {
     		// The request was successful, now send the SDLPerformInteraction RPC
     }
@@ -266,7 +266,7 @@ performInteraction.initialPrompt = [SDLTTSChunk textChunksFromString:@"<#Text to
 
 #### Swift
 ```swift
-let ttsChunk = SDLTTSChunk(text: "<#Text to Speak#>", type: .text
+let ttsChunk = SDLTTSChunk(text: "<#Text to Speak#>", type: .text)
 performInteraction.initialPrompt = [prompt]
 
 // or - more easily
@@ -309,9 +309,9 @@ performInteraction.timeout = 30000 // 30 seconds
 
 #### Swift
 ```swift
-sdlManager.send(performInteraction) { (request, response, error) in
+sdlManager.send(request: performInteraction) { (request, response, error) in
     guard let performInteractionResponse = response as? SDLPerformInteractionResponse else {
-        return;
+        return
     }
 
     // Wait for user's selection or for timeout
@@ -340,9 +340,9 @@ SDLDeleteInteractionChoiceSet* deleteRequest = [[SDLDeleteInteractionChoiceSet a
 
 #### Swift
 ```swift
-let deleteRequest = SDLDeleteInteractionChoiceSet(id: <#SDLCreateInteractionChoiceSet id#>)!
+let deleteRequest = SDLDeleteInteractionChoiceSet(id: <#SDLCreateInteractionChoiceSet id#>)
 
-sdlManager.send(deleteRequest) { (request, response, error) in
+sdlManager.send(request: deleteRequest) { (request, response, error) in
     if response?.resultCode == .success {
      	// The custom menu was deleted successfully
     }
