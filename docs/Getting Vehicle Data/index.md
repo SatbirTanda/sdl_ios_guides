@@ -71,20 +71,17 @@ getVehicleData.prndl = @YES;
 let getVehicleData = SDLGetVehicleData()
 getVehicleData.prndl = true
 sdlManager.send(getVehicleData) { (request, response, error) in
-    guard let response = response as? SDLGetVehicleDataResponse,
-        let resultCode = response.resultCode else {
-            return
-    }
+    guard let response = response as? SDLGetVehicleDataResponse else { return }
     
     if let error = error {
         print("Encountered Error sending GetVehicleData: \(error)")
         return
     }
     
-    if !resultCode.isEqual(to: .success) {
-        if resultCode.isEqual(to: .rejected) {
+    if !response.resultCode == .success {
+        if response.resultCode == .rejected {
             print("GetVehicleData was rejected. Are you in an appropriate HMI?")
-        } else if resultCode.isEqual(to: .disallowed) {
+        } else if response.resultCode == .disallowed {
             print("Your app is not allowed to use GetVehicleData")
         } else {
             print("Some unknown error has occured!")
@@ -92,7 +89,7 @@ sdlManager.send(getVehicleData) { (request, response, error) in
         return
     }
     
-    let prndl: SDLPRNDL = response.prndl
+    guard let prndl = response.prndl else { return }
 }
 ```
 
@@ -151,28 +148,28 @@ subscribeVehicleData.prndl = @YES;
 
 #### Swift
 ```swift
-let subscribeVehicleData = SDLSubscribeVehicleData()!
+let subscribeVehicleData = SDLSubscribeVehicleData()
 subscribeVehicleData.prndl = true
 
-sdlManager.send(subscribeVehicleData) { (request, response, error) in
+sdlManager.send(request: subscribeVehicleData) { (request, response, error) in
     guard let response = response as? SDLSubscribeVehicleDataResponse else { return }
-
+    
     guard response.success.boolValue == true else {
-        if response.resultCode.isEqual(to: .disallowed) {
+        if response.resultCode == .disallowed {
             // Not allowed to register for this vehicle data.
-        } else if response.resultCode.isEqual(to: .user_DISALLOWED) {
+        } else if response.resultCode == .userDisallowed {
             // User disabled the ability to give you this vehicle data
-        } else if response.resultCode.isEqual(to: .ignored) {
+        } else if response.resultCode == .ignored {
             if let prndlData = response.prndl {
-                if prndlData.resultCode.isEqual(to: .dataAlreadySubscribed) {
+                if prndlData.resultCode == .dataAlreadySubscribed {
                     // You have access to this data item, and you are already subscribed to this item so we are ignoring.
-                } else if prndlData.resultCode.isEqual(to: .vehicleDataNotAvailable) {
+                } else if prndlData.resultCode == .vehicleDataNotAvailable {
                     // You have access to this data item, but the vehicle you are connected to does not provide it.
                 } else {
-                    print("Unknown reason for being ignored: \(prndlData.resultCode.value)")
+                    print("Unknown reason for being ignored: \(prndlData.resultCode)")
                 }
             } else {
-                print("Unknown reason for being ignored: \(response.info)")
+                print("Unknown reason for being ignored: \(String(describing: response.info))")
             }
         } else if let error = error {
             print("Encountered Error sending SubscribeVehicleData: \(error)")
@@ -249,28 +246,28 @@ unsubscribeVehicleData.prndl = @YES;
 
 #### Swift
 ```swift
-let unsubscribeVehicleData = SDLUnsubscribeVehicleData()!
+let unsubscribeVehicleData = SDLUnsubscribeVehicleData()
 unsubscribeVehicleData.prndl = true
 
-sdlManager.send(unsubscribeVehicleData) { (request, response, error) in
+sdlManager.send(request: unsubscribeVehicleData) { (request, response, error) in
     guard let response = response as? SDLUnsubscribeVehicleDataResponse else { return }
     
-    guard response.success == true else {
-        if response.resultCode.isEqual(to: .disallowed) {
+    guard response.success.boolValue == true else {
+        if response.resultCode == .disallowed {
             
-        } else if response.resultCode.isEqual(to: .userDisallowed) {
+        } else if response.resultCode == .userDisallowed {
             
-        } else if response.resultCode.isEqual(to: .ignored) {
+        } else if response.resultCode == .ignored {
             if let prndlData = response.prndl {
-                if prndlData.resultCode.isEqual(to: .dataAlreadySubscribed) {
+                if prndlData.resultCode == .dataAlreadySubscribed {
                     // You have access to this data item, and you are already unsubscribed to this item so we are ignoring.
-                } else if prndlData.resultCode.isEqual(to: .vehicleDataNotAvailable) {
+                } else if prndlData.resultCode == .vehicleDataNotAvailable {
                     // You have access to this data item, but the vehicle you are connected to does not provide it.
                 } else {
-                    print("Unknown reason for being ignored: \(prndlData.resultCode.value)")
+                    print("Unknown reason for being ignored: \(prndlData.resultCode)")
                 }
             } else {
-                print("Unknown reason for being ignored: \(response.info)")
+                print("Unknown reason for being ignored: \(String(describing: response.info))")
             }
         } else if let error = error {
             print("Encountered Error sending UnsubscribeVehicleData: \(error)")
