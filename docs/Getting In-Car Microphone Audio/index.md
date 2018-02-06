@@ -22,7 +22,7 @@ SDLPerformAudioPassThru *audioPassThru = [[SDLPerformAudioPassThru alloc] initWi
 
 #### Swift
 ```swift
-let audioPassThru: SDLPerformAudioPassThru = SDLPerformAudioPassThru(initialPrompt: "<#A speech prompt when the dialog appears#>", audioPassThruDisplayText1: "<#Ask me \"What's the weather?\"#>", audioPassThruDisplayText2: "<#or \"What is 1 + 2?\"#>", samplingRate: .rate16KHZ, bitsPerSample: .sample16Bit, audioType: .PCM, maxDuration: <#Time in milliseconds to keep the dialog open#>, muteAudio: true)
+let audioPassThru = SDLPerformAudioPassThru(initialPrompt: "<#A speech prompt when the dialog appears#>", audioPassThruDisplayText1: "<#Ask me \"What's the weather?\"#>", audioPassThruDisplayText2: "<#or \"What is 1 + 2?\"#>", samplingRate: .rate16KHZ, bitsPerSample: .sample16Bit, audioType: .PCM, maxDuration: <#Time in milliseconds to keep the dialog open#>, muteAudio: true)
 
 sdlManager.send(audioPassThru) 
 ```
@@ -54,11 +54,11 @@ audioPassThru.audioDataHandler = ^(NSData * _Nullable audioData) {
 
 #### Swift
 ```swift
-let audioPassThru: SDLPerformAudioPassThru = SDLPerformAudioPassThru(initialPrompt: "<#A speech prompt when the dialog appears#>", audioPassThruDisplayText1: "<#Ask me \"What's the weather?\"#>", audioPassThruDisplayText2: "<#or \"What is 1 + 2?\"#>", samplingRate: .rate16KHZ, bitsPerSample: .sample16Bit, audioType: .PCM, maxDuration: <#Time in milliseconds to keep the dialog open#>, muteAudio: true)
+let audioPassThru = SDLPerformAudioPassThru(initialPrompt: "<#A speech prompt when the dialog appears#>", audioPassThruDisplayText1: "<#Ask me \"What's the weather?\"#>", audioPassThruDisplayText2: "<#or \"What is 1 + 2?\"#>", samplingRate: .rate16KHZ, bitsPerSample: .sample16Bit, audioType: .PCM, maxDuration: <#Time in milliseconds to keep the dialog open#>, muteAudio: true)
 
 audioPassThru.audioDataHandler = { (data) in
     // Do something with current audio data.
-    let audioData = onAudioPassThru.bulkData
+    guard let audioData = data else { return }
     <#code#>
 }
 
@@ -129,13 +129,12 @@ To process the response that we received from an ended audio capture, we use the
 
 #### Swift
 ```swift
-sdlManager.send(performAudioPassThru) { (request, response, error) in
-    guard let response = response, let resultCode = response.resultCode else {
-        return
-    }
+sdlManager.send(request: performAudioPassThru) { (request, response, error) in
+    guard let response = response else { return }
 
-    guard resultCode.isEqual(to: .success) else {
+    guard response.resultCode == .success else {
         // Cancel any usage of the audio data.
+        return
     }
     
     // Process audio data
