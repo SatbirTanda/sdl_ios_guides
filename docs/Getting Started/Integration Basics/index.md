@@ -107,7 +107,7 @@ At the top of the *ProxyManager* class, import the SDL for iOS library.
 
 #### Swift
 ```swift
-import SmartDeviceLink_iOS
+import SmartDeviceLink
 ```
 
 ### Create the SDL Manager
@@ -440,14 +440,14 @@ NS_ASSUME_NONNULL_END
 
 #### Swift
 ```swift
-import SmartDeviceLink_iOS
+import SmartDeviceLink
 
 class ProxyManager: NSObject {
     private let appName = "<#App Name#>"
     private let appId = "<#App Id#>"
     
     // Manager
-    fileprivate let sdlManager: SDLManager?
+    fileprivate var sdlManager: SDLManager!
     
     // Singleton
     static let sharedManager = ProxyManager()
@@ -477,7 +477,7 @@ class ProxyManager: NSObject {
     
     func connect() {
         // Start watching for a connection with a SDL Core
-        sdlManager?.start { (success, error) in
+        sdlManager.start { (success, error) in
             if success {
                 // Your app has successfully connected with the SDL Core
             }
