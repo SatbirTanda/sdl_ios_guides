@@ -232,7 +232,7 @@ if (appImage) {
 #### Swift
 ```swift
 if let appImage = UIImage(named: "<#AppIcon Name#>") {
-  let appIcon = SDLArtwork(with: appImage, name: "<#Name to Upload As#>", persistent: true, as: .JPG /* or .PNG */)
+  let appIcon = SDLArtwork(image: appImage, name: "<#Name to Upload As#>", persistent: true, as: .JPG /* or .PNG */)
   lifecycleConfiguration.appIcon = appIcon  
 }
 ```
