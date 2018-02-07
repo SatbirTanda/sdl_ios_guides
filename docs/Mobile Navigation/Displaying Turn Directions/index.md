@@ -45,7 +45,7 @@ turnByTurn.navigationText1 = "Turn Right"
 turnByTurn.navigationText2 = "3 mi"
 turnByTurn.turnIcon = turnIcon
 
-sdlManager.send(turnByTurn) { [weak self] (request, response, error) in
+sdlManager.send(request: turnByTurn) { [weak self] (request, response, error) in
     if response?.resultCode.isEqual(to: .success) == false {
         print("Error sending TBT.")
         return
@@ -86,7 +86,7 @@ turnByTurn.maneuverComplete = @(YES);
 let turnByTurn = SDLShowConstantTBT()
 turnByTurn.maneuverComplete = true
 
-sdlManager.send(turnByTurn) { (request, response, error) in
+sdlManager.send(request: turnByTurn) { (request, response, error) in
     if response?.resultCode.isEqual(to: .success) == false {
         print("Error sending TBT.")
         return

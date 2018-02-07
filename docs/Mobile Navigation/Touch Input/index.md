@@ -29,17 +29,17 @@ The following callbacks are provided:
 
 #### Swift
 ```swift
-    optional public func touchManager(_ manager: SDLTouchManager!, didReceiveSingleTapForView view: UIView?, atPoint point: CGPoint)
-    optional public func touchManager(_ manager: SDLTouchManager!, didReceiveDoubleTapForView view: UIView?, atPoint point: CGPoint)
-    optional public func touchManager(_ manager: SDLTouchManager!, panningDidStartInView view: UIView?, atPoint point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager, didReceiveSingleTapFor view: UIView?, at point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager, didReceiveDoubleTapFor view: UIView?, at point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager, panningDidStartIn view: UIView?, at point: CGPoint)
     optional public func touchManager(_ manager: SDLTouchManager!, didReceivePanningFromPoint fromPoint: Any!, toPoint: CGPoint)
-    optional public func touchManager(_ manager: SDLTouchManager!, panningDidEndInView view: UIView?, atPoint point: CGPoint)
-    optional public func touchManager(_ manager: SDLTouchManager!, panningCanceledAtPoint point: CGPoint)
-    optional public func touchManager(_ manager: SDLTouchManager!, pinchDidStartInView view: UIView?, atCenterPoint point: CGPoint)
-    optional public func touchManager(_ manager: SDLTouchManager!, didReceivePinchAtCenterPoint point: CGPoint, withScale scale: CGFloat)
-    optional public func touchManager(_ manager: SDLTouchManager!, didReceivePinchInView view: UIView?, atCenterPoint point: CGPoint, withScale scale: CGFloat)
-    optional public func touchManager(_ manager: SDLTouchManager!, pinchDidEndInView view: UIView?, atCenterPoint point: CGPoint)
-    optional public func touchManager(_ manager: SDLTouchManager!, pinchCanceledAtCenterPoint point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager, panningDidEndIn view: UIView?, at point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager, panningCanceledAt point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager, pinchDidStartIn view: UIView?, atCenter point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager, didReceivePinchAtCenter point: CGPoint, withScale scale: CGFloat)
+    optional public func touchManager(_ manager: SDLTouchManager, didReceivePinchIn view: UIView?, atCenter point: CGPoint, withScale scale: CGFloat)
+    optional public func touchManager(_ manager: SDLTouchManager, pinchDidEndIn view: UIView?, atCenter point: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager, pinchCanceledAtCenter point: CGPoint)
 ```
 
 !!! note

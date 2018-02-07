@@ -70,9 +70,7 @@ if ([self.sdlManager.streamManager sendAudioData:audioData] == NO) {
 ```swift
 let audioData = <#Acquire Audio Data#>;
 
-guard let streamManager = self.sdlManager.streamManager, streamManager.audioConnected else {
-    return
-}
+guard let streamManager = self.sdlManager.streamManager, streamManager.isAudioConnected else { return }
 
 if streamManager.sendAudioData(audioData) == false {
     print("Could not send Audio Data")

@@ -30,7 +30,7 @@ performInteraction.interactionChoiceSetIDList = []
 performInteraction.timeout = 100000
 performInteraction.interactionMode = .manualOnly
 performInteraction.interactionLayout = .keyboard
-sdlManager.send(performInteraction) { (request, response, error) in
+sdlManager.send(request: performInteraction) { (request, response, error) in
     if response?.resultCode.isEqual(to: .success) == false {
         print("Error sending perform interaction.")
         return

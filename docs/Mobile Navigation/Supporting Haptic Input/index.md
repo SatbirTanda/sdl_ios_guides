@@ -47,7 +47,7 @@ SDLSendHapticData *hapticData = [[SDLSendHapticData alloc] initWithHapticRectDat
 
 #### Swift
 ```swift
-let viewRect = SDLRectange(cgRect: view.bounds)
+guard let viewRect = SDLRectange(cgRect: view.bounds) else { return }
 let hapticRect = SDLHapticRect(id: 1, rect: viewRect)
 let hapticData = SDLSendHapticData(hapticRectData: [hapticRect])
 
