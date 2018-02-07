@@ -1,4 +1,4 @@
-    ## Calling a Phone Number
+## Calling a Phone Number
 Dialing a Phone Number allows you to send a phone number to dial on the user's phone. Regardless of platform (Android or iOS), you must be sure that a device is connected via Bluetooth (even if using iOS/USB) for this RPC to work. If it is not connected, you will receive a REJECTED `resultCode`.
 
 !!! note
