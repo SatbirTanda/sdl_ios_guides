@@ -57,13 +57,13 @@ if ([self.sdlManager.streamManager sendVideoData:imageBuffer] == NO) {
 
 #### Swift
 ```swift
-let imageBuffer = <#Acquire Image Buffer#>;
+let imageBuffer = <#Acquire Image Buffer#>
 
-guard let streamManager = self.sdlManager.streamManager, !streamManager.videoStreamPaused else {
+guard let streamManager = self.sdlManager.streamManager, !streamManager.isVideoStreamingPaused else {
     return
 }
 
-if streamManager.sendVideoData(imageBuffer) == false {
+if !streamManager.sendVideoData(imageBuffer) {
     print("Could not send Video Data")
 }
 ```

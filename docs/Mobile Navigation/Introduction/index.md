@@ -26,7 +26,7 @@ SDLConfiguration *config = [SDLConfiguration configurationWithLifecycle:lifecycl
 
 #### Swift
 ```swift
-let lifecycleConfig = SDLLifecycleConfiguration.defaultConfiguration(withAppName: "<#App Name#>", appId: "<#App Id#>")
+let lifecycleConfig = SDLLifecycleConfiguration(appName: "<#App Name#>", appId: "<#App Id#>")
 lifecycleConfig.appType = .navigation
 
 let streamingConfig = SDLStreamingMediaConfiguration(securityManagers: [OEMSecurityManager.self])
