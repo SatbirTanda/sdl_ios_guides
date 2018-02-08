@@ -32,7 +32,7 @@ The following callbacks are provided:
     optional public func touchManager(_ manager: SDLTouchManager, didReceiveSingleTapFor view: UIView?, at point: CGPoint)
     optional public func touchManager(_ manager: SDLTouchManager, didReceiveDoubleTapFor view: UIView?, at point: CGPoint)
     optional public func touchManager(_ manager: SDLTouchManager, panningDidStartIn view: UIView?, at point: CGPoint)
-    optional public func touchManager(_ manager: SDLTouchManager!, didReceivePanningFromPoint fromPoint: Any!, toPoint: CGPoint)
+    optional public func touchManager(_ manager: SDLTouchManager, didReceivePanningFrom fromPoint: CGPoint, to toPoint: CGPoint)
     optional public func touchManager(_ manager: SDLTouchManager, panningDidEndIn view: UIView?, at point: CGPoint)
     optional public func touchManager(_ manager: SDLTouchManager, panningCanceledAt point: CGPoint)
     optional public func touchManager(_ manager: SDLTouchManager, pinchDidStartIn view: UIView?, atCenter point: CGPoint)
